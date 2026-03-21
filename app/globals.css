@@ -4,126 +4,392 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ============================================================
+   FREELANCEOS — DESIGN TOKENS
+   Built to complement Raenest's 2025 rebrand:
+   bold, confident, sharp contrasts, elevated fintech feel.
+   ============================================================ */
+
 @theme inline {
+  /* Typography */
+  --font-sans: var(--font-dm-sans);
+  --font-mono: var(--font-dm-mono);
+
+  /* Map CSS vars → Tailwind utilities */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Sidebar tokens */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Chart colors */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* FreelanceOS Brand */
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-muted: var(--brand-muted);
+  --color-earn: var(--earn); /* Amber - earnings/money */
+  --color-earn-foreground: var(--earn-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+
+  /* Border radius scale */
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: calc(var(--radius) * 0.75);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-xl: calc(var(--radius) * 1.5);
+  --radius-2xl: calc(var(--radius) * 2);
+  --radius-full: 9999px;
+
+  /* Animations */
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-fade-up: fade-up 0.4s ease-out;
+  --animate-fade-in: fade-in 0.3s ease-out;
+  --animate-slide-in-left: slide-in-left 0.3s ease-out;
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+      opacity: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+      opacity: 1;
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+      opacity: 1;
+    }
+    to {
+      height: 0;
+      opacity: 0;
+    }
+  }
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes slide-in-left {
+    from {
+      opacity: 0;
+      transform: translateX(-16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
 }
 
+/* ============================================================
+   LIGHT MODE
+   Clean, professional, high contrast — not washed out.
+   ============================================================ */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --background: oklch(
+    0.97 0.005 250
+  ); /* Very slight blue tint, not pure white */
+  --foreground: oklch(0.12 0.02 250); /* Near-black with blue undertone */
+
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.12 0.02 250);
+
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.809 0.105 251.813);
-  --chart-2: oklch(0.623 0.214 259.815);
-  --chart-3: oklch(0.546 0.245 262.881);
-  --chart-4: oklch(0.488 0.243 264.376);
-  --chart-5: oklch(0.424 0.199 265.638);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --popover-foreground: oklch(0.12 0.02 250);
+
+  /* Primary = Raenest blue */
+  --primary: oklch(0.51 0.22 264); /* #2563EB electric blue */
+  --primary-foreground: oklch(0.98 0 0);
+
+  --secondary: oklch(0.94 0.01 250);
+  --secondary-foreground: oklch(0.25 0.02 250);
+
+  --muted: oklch(0.94 0.008 250);
+  --muted-foreground: oklch(0.52 0.02 250);
+
+  --accent: oklch(0.94 0.01 250);
+  --accent-foreground: oklch(0.25 0.02 250);
+
+  --destructive: oklch(0.58 0.24 27);
+
+  --border: oklch(0.89 0.01 250);
+  --input: oklch(0.89 0.01 250);
+  --ring: oklch(0.51 0.22 264);
+
+  /* Charts — blue family for cohesion */
+  --chart-1: oklch(0.51 0.22 264); /* brand blue */
+  --chart-2: oklch(0.72 0.17 158); /* emerald */
+  --chart-3: oklch(0.75 0.16 65); /* amber */
+  --chart-4: oklch(0.64 0.21 294); /* violet */
+  --chart-5: oklch(0.58 0.22 27); /* red */
+
+  /* Brand */
+  --brand: oklch(0.51 0.22 264);
+  --brand-foreground: oklch(0.98 0 0);
+  --brand-muted: oklch(0.92 0.05 264);
+
+  /* Earn (amber) — used on earnings, money stats */
+  --earn: oklch(0.75 0.16 65);
+  --earn-foreground: oklch(0.15 0.05 65);
+
+  --success: oklch(0.72 0.17 158);
+  --success-foreground: oklch(0.15 0.05 158);
+
+  --warning: oklch(0.75 0.16 65);
+  --warning-foreground: oklch(0.15 0.05 65);
+
+  --radius: 0.75rem;
+
+  /* Sidebar — slightly darker than background */
+  --sidebar: oklch(0.99 0 0);
+  --sidebar-foreground: oklch(0.12 0.02 250);
+  --sidebar-primary: oklch(0.51 0.22 264);
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.94 0.015 264);
+  --sidebar-accent-foreground: oklch(0.51 0.22 264);
+  --sidebar-border: oklch(0.91 0.01 250);
+  --sidebar-ring: oklch(0.51 0.22 264);
 }
 
+/* ============================================================
+   DARK MODE
+   Deep navy shell — Raenest's bold, confident dark aesthetic.
+   Cards float on a near-black surface.
+   ============================================================ */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.809 0.105 251.813);
-  --chart-2: oklch(0.623 0.214 259.815);
-  --chart-3: oklch(0.546 0.245 262.881);
-  --chart-4: oklch(0.488 0.243 264.376);
-  --chart-5: oklch(0.424 0.199 265.638);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: oklch(0.1 0.02 250); /* Deep navy-black */
+  --foreground: oklch(0.95 0.005 250);
+
+  --card: oklch(0.14 0.025 250); /* Elevated surface */
+  --card-foreground: oklch(0.95 0.005 250);
+
+  --popover: oklch(0.14 0.025 250);
+  --popover-foreground: oklch(0.95 0.005 250);
+
+  --primary: oklch(0.6 0.22 264); /* Slightly brighter blue on dark */
+  --primary-foreground: oklch(0.98 0 0);
+
+  --secondary: oklch(0.18 0.025 250);
+  --secondary-foreground: oklch(0.9 0.005 250);
+
+  --muted: oklch(0.18 0.02 250);
+  --muted-foreground: oklch(0.55 0.015 250);
+
+  --accent: oklch(0.18 0.025 250);
+  --accent-foreground: oklch(0.9 0.005 250);
+
+  --destructive: oklch(0.65 0.22 27);
+
+  --border: oklch(1 0 0 / 8%);
+  --input: oklch(1 0 0 / 10%);
+  --ring: oklch(0.6 0.22 264);
+
+  /* Charts stay vivid on dark bg */
+  --chart-1: oklch(0.6 0.22 264);
+  --chart-2: oklch(0.75 0.17 158);
+  --chart-3: oklch(0.8 0.16 65);
+  --chart-4: oklch(0.68 0.21 294);
+  --chart-5: oklch(0.68 0.22 27);
+
+  /* Brand */
+  --brand: oklch(0.6 0.22 264);
+  --brand-foreground: oklch(0.98 0 0);
+  --brand-muted: oklch(0.2 0.06 264);
+
+  /* Earn */
+  --earn: oklch(0.8 0.16 65);
+  --earn-foreground: oklch(0.12 0 0);
+
+  --success: oklch(0.75 0.17 158);
+  --success-foreground: oklch(0.12 0 0);
+
+  --warning: oklch(0.8 0.16 65);
+  --warning-foreground: oklch(0.12 0 0);
+
+  /* Sidebar — slightly lighter than background */
+  --sidebar: oklch(0.13 0.025 250);
+  --sidebar-foreground: oklch(0.9 0.005 250);
+  --sidebar-primary: oklch(0.6 0.22 264);
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.2 0.04 264);
+  --sidebar-accent-foreground: oklch(0.75 0.12 264);
+  --sidebar-border: oklch(1 0 0 / 7%);
+  --sidebar-ring: oklch(0.6 0.22 264);
 }
 
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    box-sizing: border-box;
   }
+
+  html {
+    @apply font-sans antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
   body {
     @apply bg-background text-foreground;
+    /* Prevent layout shift from scrollbar */
+    scrollbar-gutter: stable;
   }
+
+  /* Smooth scroll */
   html {
-    @apply font-sans;
+    scroll-behavior: smooth;
+  }
+
+  /* Number inputs — no spinners */
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+/* ============================================================
+   UTILITY CLASSES
+   Project-specific utilities that aren't in Tailwind core
+   ============================================================ */
+@layer utilities {
+  /* Glass morphism — used on overlapping cards */
+  .glass {
+    background: oklch(from var(--card) l c h / 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* Gradient text — used for big earning numbers */
+  .text-gradient-earn {
+    background: linear-gradient(
+      135deg,
+      var(--earn) 0%,
+      oklch(0.85 0.12 85) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Brand gradient background */
+  .bg-brand-gradient {
+    background: linear-gradient(
+      135deg,
+      oklch(0.51 0.22 264) 0%,
+      oklch(0.45 0.24 280) 100%
+    );
+  }
+
+  /* Subtle grid pattern for empty states */
+  .bg-grid-subtle {
+    background-image:
+      linear-gradient(
+        oklch(from var(--border) l c h / 0.5) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        90deg,
+        oklch(from var(--border) l c h / 0.5) 1px,
+        transparent 1px
+      );
+    background-size: 24px 24px;
+  }
+
+  /* Scrollbar styling */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: var(--border);
+    border-radius: 9999px;
+  }
+
+  /* Status badge colors */
+  .status-paid {
+    @apply bg-success/10 text-success;
+  }
+  .status-pending {
+    @apply bg-warning/10 text-warning;
+  }
+  .status-overdue {
+    @apply bg-destructive/10 text-destructive;
+  }
+  .status-draft {
+    @apply bg-muted text-muted-foreground;
+  }
+  .status-active {
+    @apply bg-brand/10 text-brand;
+  }
+  .status-completed {
+    @apply bg-success/10 text-success;
+  }
+  .status-on_hold {
+    @apply bg-muted text-muted-foreground;
+  }
+  .status-planning {
+    @apply bg-warning/10 text-warning;
   }
 }
