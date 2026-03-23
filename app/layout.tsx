@@ -70,13 +70,13 @@ export default function RootLayout({
            */}
           <AuthProvider>
             {children}
-            <Toaster
-              position="bottom-right"
-              richColors
-              closeButton
-              toastOptions={{ classNames: { toast: "font-sans" } }}
-            />
           </AuthProvider>
+          <Toaster
+            position="bottom-right"
+            richColors
+            closeButton
+            toastOptions={{ classNames: { toast: "font-sans" } }}
+          />
         </ThemeProvider>
       </body>
     </html>

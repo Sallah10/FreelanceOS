@@ -6,71 +6,80 @@ import { useRouter } from "next/navigation";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { toast } from "sonner";
 import { useAuth } from "@/lib/context/auth-context";
 import { cn } from "@/lib/utils";
 import { Eye, EyeOff, Zap, ArrowRight, Loader2, CheckCircle2 } from "lucide-react";
-import { toast } from "sonner";
 
-// ── Schema ─────────────────────────────────────────────────────────
-
+// ─── Schema ───────────────────────────────────────────────────────
 const registerSchema = z
     .object({
         firstName: z
             .string()
-            .min(2, "First name must be at least 2 characters")
-            .max(50, "First name is too long"),
+            .min(1, "First name is required")
+            .min(2, "First name too short")
+            .max(50),
         lastName: z
             .string()
-            .min(2, "Last name must be at least 2 characters")
-            .max(50, "Last name is too long"),
-        email: z.string().email("Enter a valid email address"),
+            .min(1, "Last name is required")
+            .min(2, "Last name too short")
+            .max(50),
+        email: z
+            .string()
+            .min(1, "Email is required")
+            .email("Enter a valid email address"),
         password: z
             .string()
-            .min(8, "Password must be at least 8 characters")
-            .regex(/[A-Z]/, "Must contain at least one uppercase letter")
-            .regex(/[0-9]/, "Must contain at least one number"),
-        confirmPassword: z.string(),
+            .min(8, "Minimum 8 characters")
+            .regex(/[A-Z]/, "Include at least one uppercase letter")
+            .regex(/[0-9]/, "Include at least one number"),
+        confirmPassword: z.string().min(1, "Please confirm your password"),
     })
     .refine((data) => data.password === data.confirmPassword, {
         message: "Passwords do not match",
         path: ["confirmPassword"],
     });
 
-type RegisterFormData = z.infer<typeof registerSchema>;
+type RegisterFormValues = z.infer<typeof registerSchema>;
 
-// Password strength indicator
-function getPasswordStrength(password: string): {
-    score: number;
-    label: string;
-    color: string;
-} {
-    if (!password) return { score: 0, label: "", color: "" };
-    let score = 0;
-    if (password.length >= 8) score++;
-    if (password.length >= 12) score++;
-    if (/[A-Z]/.test(password)) score++;
-    if (/[0-9]/.test(password)) score++;
-    if (/[^A-Za-z0-9]/.test(password)) score++;
+// ─── Password strength indicator ─────────────────────────────────
+function PasswordStrength({ password }: { password: string }) {
+    const checks = [
+        { label: "8+ characters", pass: password.length >= 8 },
+        { label: "Uppercase letter", pass: /[A-Z]/.test(password) },
+        { label: "Number", pass: /[0-9]/.test(password) },
+    ];
 
-    if (score <= 2) return { score, label: "Weak", color: "#EF4444" };
-    if (score <= 3) return { score, label: "Fair", color: "#F59E0B" };
-    return { score, label: "Strong", color: "#10B981" };
+    if (!password) return null;
+
+    return (
+        <div className="mt-2 space-y-1">
+            {checks.map((c) => (
+                <div key={c.label} className="flex items-center gap-1.5">
+                    <CheckCircle2
+                        className={cn("w-3 h-3 transition-colors", c.pass ? "text-green-400" : "text-white/20")}
+                    />
+                    <span className={cn("text-xs transition-colors", c.pass ? "text-white/50" : "text-white/20")}>
+                        {c.label}
+                    </span>
+                </div>
+            ))}
+        </div>
+    );
 }
 
-// ── Page ───────────────────────────────────────────────────────────
-
+// ─── Page ─────────────────────────────────────────────────────────
 export default function RegisterPage() {
+    const [showPassword, setShowPassword] = useState(false);
     const { register: registerUser } = useAuth();
     const router = useRouter();
-    const [showPassword, setShowPassword] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const {
         register,
         handleSubmit,
         control,
-        formState: { errors },
-    } = useForm<RegisterFormData>({
+        formState: { errors, isSubmitting },
+    } = useForm<RegisterFormValues>({
         resolver: zodResolver(registerSchema),
         defaultValues: {
             firstName: "",
@@ -81,46 +90,49 @@ export default function RegisterPage() {
         },
     });
 
-    // Use useWatch instead of watch to avoid React Compiler warnings
-    const passwordValue = useWatch({
+    const watchedPassword = useWatch({
         control,
         name: "password",
         defaultValue: "",
     });
 
-    const confirmPasswordValue = useWatch({
-        control,
-        name: "confirmPassword",
-        defaultValue: "",
-    });
-
-    const strength = getPasswordStrength(passwordValue);
-    const passwordsMatch = confirmPasswordValue === passwordValue && confirmPasswordValue.length > 0;
-
-    const onSubmit = async (data: RegisterFormData) => {
-        setIsSubmitting(true);
+    const onSubmit = async (values: RegisterFormValues) => {
         const result = await registerUser({
-            email: data.email,
-            password: data.password,
-            firstName: data.firstName,
-            lastName: data.lastName,
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: values.email,
+            password: values.password,
         });
-        setIsSubmitting(false);
 
         if (result.success) {
-            toast.success("Account created! Welcome to FreelanceOS.");
+            toast.success("Account created!", {
+                description: "Welcome to FreelanceOS. Let's get you set up.",
+            });
             router.push("/dashboard");
         } else {
-            toast.error(result.error ?? "Registration failed. Please try again.");
+            toast.error("Registration failed", {
+                description: result.error ?? "Please try again.",
+            });
         }
     };
 
+    // ── Reusable field renderer ──────────────────────────────────────
+    const inputClass = (hasError: boolean) =>
+        cn(
+            "w-full rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20",
+            "bg-white/5 border transition-colors outline-none",
+            "focus:border-[#2563EB]",
+            hasError
+                ? "border-red-500/50 bg-red-500/5"
+                : "border-white/8 hover:border-white/15",
+        );
+
     return (
         <div
-            className="min-h-screen flex items-center justify-center px-4 py-12"
+            className="min-h-screen flex flex-col items-center justify-center px-4 py-12"
             style={{ background: "oklch(0.10 0.02 250)" }}
         >
-            {/* Background grid */}
+            {/* Background texture */}
             <div
                 className="fixed inset-0 opacity-[0.025] pointer-events-none"
                 style={{
@@ -129,159 +141,135 @@ export default function RegisterPage() {
                     backgroundSize: "40px 40px",
                 }}
             />
+            <div
+                className="fixed top-0 left-1/2 -translate-x-1/2 w-96 h-64 opacity-10 pointer-events-none"
+                style={{
+                    background: "radial-gradient(ellipse, #2563EB 0%, transparent 70%)",
+                    filter: "blur(40px)",
+                }}
+            />
 
             <div className="relative w-full max-w-sm">
                 {/* Logo */}
-                <div className="flex items-center justify-center gap-2 mb-8">
-                    <div className="w-8 h-8 rounded-xl bg-[#2563EB] flex items-center justify-center">
-                        <Zap className="w-4 h-4 text-white fill-current" />
-                    </div>
-                    <span className="font-bold text-white">FreelanceOS</span>
+                <div className="flex flex-col items-center mb-8">
+                    <Link href="/" className="flex items-center gap-2 mb-6">
+                        <div className="w-8 h-8 rounded-xl bg-[#2563EB] flex items-center justify-center">
+                            <Zap className="w-4 h-4 text-white fill-current" />
+                        </div>
+                        <span className="font-bold text-white">FreelanceOS</span>
+                    </Link>
+                    <h1 className="text-2xl font-bold text-white tracking-tight">
+                        Create your account
+                    </h1>
+                    <p className="text-sm text-white/40 mt-1">
+                        Free forever · Raenest payments included
+                    </p>
                 </div>
 
                 {/* Card */}
                 <div
-                    className="rounded-2xl p-8 space-y-5"
+                    className="rounded-2xl p-6"
                     style={{
                         background: "oklch(0.14 0.025 250)",
                         border: "1px solid oklch(1 0 0 / 8%)",
                     }}
                 >
-                    <div className="space-y-1">
-                        <h1 className="text-xl font-bold text-white">Create your account</h1>
-                        <p className="text-sm" style={{ color: "oklch(0.55 0.015 250)" }}>
-                            Start managing your freelance business today
-                        </p>
-                    </div>
-
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+                    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
                         {/* Name row */}
                         <div className="grid grid-cols-2 gap-3">
-                            <Field
-                                label="First name"
-                                id="firstName"
-                                error={errors.firstName?.message}
-                            >
+                            <div className="space-y-1.5">
+                                <label className="block text-xs font-medium text-white/60 uppercase tracking-wider">
+                                    First name
+                                </label>
                                 <input
-                                    id="firstName"
                                     type="text"
                                     autoComplete="given-name"
                                     placeholder="Bello"
                                     {...register("firstName")}
-                                    className="w-full rounded-xl px-3 py-3 text-sm outline-none text-white placeholder:text-white/20"
-                                    style={{
-                                        background: "oklch(0.18 0.02 250)",
-                                        border: `1px solid ${errors.firstName ? "oklch(0.65 0.22 27 / 0.5)" : "oklch(1 0 0 / 8%)"}`,
-                                    }}
+                                    className={inputClass(!!errors.firstName)}
                                 />
-                            </Field>
-                            <Field
-                                label="Last name"
-                                id="lastName"
-                                error={errors.lastName?.message}
-                            >
+                                {errors.firstName && (
+                                    <p className="text-xs text-red-400">{errors.firstName.message}</p>
+                                )}
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="block text-xs font-medium text-white/60 uppercase tracking-wider">
+                                    Last name
+                                </label>
                                 <input
-                                    id="lastName"
                                     type="text"
                                     autoComplete="family-name"
-                                    placeholder="Demo"
+                                    placeholder="Ade"
                                     {...register("lastName")}
-                                    className="w-full rounded-xl px-3 py-3 text-sm outline-none text-white placeholder:text-white/20"
-                                    style={{
-                                        background: "oklch(0.18 0.02 250)",
-                                        border: `1px solid ${errors.lastName ? "oklch(0.65 0.22 27 / 0.5)" : "oklch(1 0 0 / 8%)"}`,
-                                    }}
+                                    className={inputClass(!!errors.lastName)}
                                 />
-                            </Field>
+                                {errors.lastName && (
+                                    <p className="text-xs text-red-400">{errors.lastName.message}</p>
+                                )}
+                            </div>
                         </div>
 
                         {/* Email */}
-                        <Field label="Email address" id="email" error={errors.email?.message}>
+                        <div className="space-y-1.5">
+                            <label className="block text-xs font-medium text-white/60 uppercase tracking-wider">
+                                Email
+                            </label>
                             <input
-                                id="email"
                                 type="email"
                                 autoComplete="email"
                                 placeholder="you@example.com"
                                 {...register("email")}
-                                className="w-full rounded-xl px-4 py-3 text-sm outline-none text-white placeholder:text-white/20"
-                                style={{
-                                    background: "oklch(0.18 0.02 250)",
-                                    border: `1px solid ${errors.email ? "oklch(0.65 0.22 27 / 0.5)" : "oklch(1 0 0 / 8%)"}`,
-                                }}
+                                className={inputClass(!!errors.email)}
                             />
-                        </Field>
+                            {errors.email && (
+                                <p className="text-xs text-red-400">{errors.email.message}</p>
+                            )}
+                        </div>
 
                         {/* Password */}
-                        <Field label="Password" id="password" error={errors.password?.message}>
+                        <div className="space-y-1.5">
+                            <label className="block text-xs font-medium text-white/60 uppercase tracking-wider">
+                                Password
+                            </label>
                             <div className="relative">
                                 <input
-                                    id="password"
                                     type={showPassword ? "text" : "password"}
                                     autoComplete="new-password"
-                                    placeholder="Min. 8 characters"
+                                    placeholder="••••••••"
                                     {...register("password")}
-                                    className="w-full rounded-xl px-4 py-3 pr-11 text-sm outline-none text-white placeholder:text-white/20"
-                                    style={{
-                                        background: "oklch(0.18 0.02 250)",
-                                        border: `1px solid ${errors.password ? "oklch(0.65 0.22 27 / 0.5)" : "oklch(1 0 0 / 8%)"}`,
-                                    }}
+                                    className={cn(inputClass(!!errors.password), "pr-11")}
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword((s) => !s)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1"
-                                    style={{ color: "oklch(0.55 0.01 250)" }}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors"
                                     aria-label={showPassword ? "Hide password" : "Show password"}
                                 >
                                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                 </button>
                             </div>
-                            {/* Strength bar */}
-                            {passwordValue && (
-                                <div className="mt-2 space-y-1">
-                                    <div className="flex gap-1">
-                                        {[1, 2, 3, 4, 5].map((i) => (
-                                            <div
-                                                key={i}
-                                                className="flex-1 h-1 rounded-full transition-all duration-300"
-                                                style={{
-                                                    background:
-                                                        i <= strength.score ? strength.color : "oklch(0.25 0.01 250)",
-                                                }}
-                                            />
-                                        ))}
-                                    </div>
-                                    <p className="text-xs" style={{ color: strength.color }}>
-                                        {strength.label}
-                                    </p>
-                                </div>
+                            {errors.password && (
+                                <p className="text-xs text-red-400">{errors.password.message}</p>
                             )}
-                        </Field>
+                            <PasswordStrength password={watchedPassword} />
+                        </div>
 
                         {/* Confirm password */}
-                        <Field
-                            label="Confirm password"
-                            id="confirmPassword"
-                            error={errors.confirmPassword?.message}
-                        >
-                            <div className="relative">
-                                <input
-                                    id="confirmPassword"
-                                    type={showPassword ? "text" : "password"}
-                                    autoComplete="new-password"
-                                    placeholder="Repeat your password"
-                                    {...register("confirmPassword")}
-                                    className="w-full rounded-xl px-4 py-3 pr-11 text-sm outline-none text-white placeholder:text-white/20"
-                                    style={{
-                                        background: "oklch(0.18 0.02 250)",
-                                        border: `1px solid ${errors.confirmPassword ? "oklch(0.65 0.22 27 / 0.5)" : "oklch(1 0 0 / 8%)"}`,
-                                    }}
-                                />
-                                {passwordsMatch && (
-                                    <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#10B981]" />
-                                )}
-                            </div>
-                        </Field>
+                        <div className="space-y-1.5">
+                            <label className="block text-xs font-medium text-white/60 uppercase tracking-wider">
+                                Confirm password
+                            </label>
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                autoComplete="new-password"
+                                placeholder="••••••••"
+                                {...register("confirmPassword")}
+                                className={inputClass(!!errors.confirmPassword)}
+                            />
+                            {errors.confirmPassword && (
+                                <p className="text-xs text-red-400">{errors.confirmPassword.message}</p>
+                            )}
+                        </div>
 
                         {/* Submit */}
                         <button
@@ -289,63 +277,42 @@ export default function RegisterPage() {
                             disabled={isSubmitting}
                             className={cn(
                                 "w-full flex items-center justify-center gap-2 mt-2",
-                                "py-3 rounded-xl font-semibold text-sm text-white transition-all",
-                                "hover:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                                "bg-[#2563EB] hover:bg-[#1d4fd8] active:scale-[0.98]",
+                                "text-white font-semibold text-sm py-3 rounded-xl",
+                                "transition-all duration-150",
+                                "disabled:opacity-60 disabled:cursor-not-allowed",
                             )}
-                            style={{ background: "#2563EB" }}
                         >
                             {isSubmitting ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
+                                <>
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                    Creating account...
+                                </>
                             ) : (
                                 <>
                                     Create account
-                                    <ArrowRight className="w-3.5 h-3.5" />
+                                    <ArrowRight className="w-4 h-4" />
                                 </>
                             )}
                         </button>
-                    </form>
 
-                    <p className="text-center text-xs" style={{ color: "oklch(0.50 0.01 250)" }}>
-                        Already have an account?{" "}
-                        <Link href="/login" className="font-medium" style={{ color: "#3B82F6" }}>
-                            Sign in
-                        </Link>
-                    </p>
+                        <p className="text-center text-[11px] text-white/20 pt-1">
+                            By creating an account you agree to our Terms of Service
+                        </p>
+                    </form>
                 </div>
 
-                <p className="text-center text-xs mt-6" style={{ color: "oklch(0.35 0.01 250)" }}>
-                    By creating an account you agree to our Terms of Service
+                {/* Footer */}
+                <p className="text-center text-sm text-white/35 mt-6">
+                    Already have an account?{" "}
+                    <Link
+                        href="/login"
+                        className="text-[#3B82F6] hover:text-[#60A5FA] font-medium transition-colors"
+                    >
+                        Sign in
+                    </Link>
                 </p>
             </div>
-        </div>
-    );
-}
-
-// ── Field wrapper ──────────────────────────────────────────────────
-
-function Field({
-    label,
-    id,
-    error,
-    children,
-}: {
-    label: string;
-    id: string;
-    placeholder?: string;
-    error?: string;
-    children: React.ReactNode;
-}) {
-    return (
-        <div className="space-y-1.5">
-            <label
-                htmlFor={id}
-                className="block text-xs font-medium"
-                style={{ color: "oklch(0.70 0.01 250)" }}
-            >
-                {label}
-            </label>
-            {children}
-            {error && <p className="text-xs text-red-400">{error}</p>}
         </div>
     );
 }

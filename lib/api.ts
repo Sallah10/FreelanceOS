@@ -425,6 +425,59 @@ export const ClientsAPI = {
     if (!client) return { success: false, error: "Client not found" };
     return mockSuccess(client);
   },
+
+  createClient: async (
+    payload: Omit<Client, "id" | "userId" | "createdAt">,
+  ): Promise<ApiResponse<Client>> => {
+    if (!USE_MOCK) {
+      const { data } = await apiClient.post<ApiResponse<Client>>(
+        "/clients",
+        payload,
+      );
+      return data;
+    }
+    await delay(600);
+    const newClient: Client = {
+      ...payload,
+      id: `c_${Date.now()}`,
+      userId: "u_1",
+      createdAt: new Date().toISOString(),
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(payload.name)}&background=2563EB&color=fff&bold=true`,
+    };
+    mockClients.unshift(newClient);
+    return mockSuccess(newClient);
+  },
+
+  updateClient: async (
+    id: string,
+    payload: Partial<Client>,
+  ): Promise<ApiResponse<Client>> => {
+    if (!USE_MOCK) {
+      const { data } = await apiClient.put<ApiResponse<Client>>(
+        `/clients/${id}`,
+        payload,
+      );
+      return data;
+    }
+    await delay(400);
+    const idx = mockClients.findIndex((c) => c.id === id);
+    if (idx === -1) return { success: false, error: "Client not found" };
+    mockClients[idx] = { ...mockClients[idx], ...payload };
+    return mockSuccess(mockClients[idx]);
+  },
+
+  deleteClient: async (id: string): Promise<ApiResponse<null>> => {
+    if (!USE_MOCK) {
+      const { data } = await apiClient.delete<ApiResponse<null>>(
+        `/clients/${id}`,
+      );
+      return data;
+    }
+    await delay(400);
+    const idx = mockClients.findIndex((c) => c.id === id);
+    if (idx !== -1) mockClients.splice(idx, 1);
+    return mockSuccess(null);
+  },
 };
 
 export const ProjectsAPI = {
@@ -436,6 +489,65 @@ export const ProjectsAPI = {
     await delay(600);
     return mockSuccess(mockProjects);
   },
+
+  createProject: async (
+    payload: Omit<Project, "id" | "userId" | "createdAt" | "updatedAt">,
+  ): Promise<ApiResponse<Project>> => {
+    if (!USE_MOCK) {
+      const { data } = await apiClient.post<ApiResponse<Project>>(
+        "/projects",
+        payload,
+      );
+      return data;
+    }
+    await delay(600);
+    const client = mockClients.find((c) => c.id === payload.clientId);
+    const newProject: Project = {
+      ...payload,
+      id: `p_${Date.now()}`,
+      userId: "u_1",
+      client,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    mockProjects.unshift(newProject);
+    return mockSuccess(newProject);
+  },
+
+  updateProject: async (
+    id: string,
+    payload: Partial<Project>,
+  ): Promise<ApiResponse<Project>> => {
+    if (!USE_MOCK) {
+      const { data } = await apiClient.put<ApiResponse<Project>>(
+        `/projects/${id}`,
+        payload,
+      );
+      return data;
+    }
+    await delay(400);
+    const idx = mockProjects.findIndex((p) => p.id === id);
+    if (idx === -1) return { success: false, error: "Project not found" };
+    mockProjects[idx] = {
+      ...mockProjects[idx],
+      ...payload,
+      updatedAt: new Date().toISOString(),
+    };
+    return mockSuccess(mockProjects[idx]);
+  },
+
+  deleteProject: async (id: string): Promise<ApiResponse<null>> => {
+    if (!USE_MOCK) {
+      const { data } = await apiClient.delete<ApiResponse<null>>(
+        `/projects/${id}`,
+      );
+      return data;
+    }
+    await delay(400);
+    const idx = mockProjects.findIndex((p) => p.id === id);
+    if (idx !== -1) mockProjects.splice(idx, 1);
+    return mockSuccess(null);
+  },
 };
 
 export const InvoicesAPI = {
@@ -446,6 +558,67 @@ export const InvoicesAPI = {
     }
     await delay(500);
     return mockSuccess(mockInvoices);
+  },
+
+  createInvoice: async (
+    payload: Omit<Invoice, "id" | "userId" | "createdAt" | "updatedAt">,
+  ): Promise<ApiResponse<Invoice>> => {
+    if (!USE_MOCK) {
+      const { data } = await apiClient.post<ApiResponse<Invoice>>(
+        "/invoices",
+        payload,
+      );
+      return data;
+    }
+    await delay(700);
+    const count = mockInvoices.length + 1;
+    const newInvoice: Invoice = {
+      ...payload,
+      id: `inv_${Date.now()}`,
+      userId: "u_1",
+      number: `INV-2026-${String(count).padStart(3, "0")}`,
+      // Auto-generate Raenest payment link placeholder
+      paymentLink: `https://pay.raenest.com/fos-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    mockInvoices.unshift(newInvoice);
+    return mockSuccess(newInvoice);
+  },
+
+  updateInvoice: async (
+    id: string,
+    payload: Partial<Invoice>,
+  ): Promise<ApiResponse<Invoice>> => {
+    if (!USE_MOCK) {
+      const { data } = await apiClient.put<ApiResponse<Invoice>>(
+        `/invoices/${id}`,
+        payload,
+      );
+      return data;
+    }
+    await delay(400);
+    const idx = mockInvoices.findIndex((inv) => inv.id === id);
+    if (idx === -1) return { success: false, error: "Invoice not found" };
+    mockInvoices[idx] = {
+      ...mockInvoices[idx],
+      ...payload,
+      updatedAt: new Date().toISOString(),
+    };
+    return mockSuccess(mockInvoices[idx]);
+  },
+
+  deleteInvoice: async (id: string): Promise<ApiResponse<null>> => {
+    if (!USE_MOCK) {
+      const { data } = await apiClient.delete<ApiResponse<null>>(
+        `/invoices/${id}`,
+      );
+      return data;
+    }
+    await delay(400);
+    const idx = mockInvoices.findIndex((inv) => inv.id === id);
+    if (idx !== -1) mockInvoices.splice(idx, 1);
+    return mockSuccess(null);
   },
 };
 

@@ -2,356 +2,461 @@
 
 import { useState, useMemo } from "react";
 import { useClients } from "@/lib/hooks/use-clients";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { cn, formatCurrency, formatDate, getInitials } from "@/lib/utils";
 import {
-    Users, Search, Plus,
-    RefreshCw,
-    //  Mail,
-    Building2, Globe,
-    //  MoreHorizontal, 
-    TrendingUp,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+    Card, CardContent,
+    // CardHeader, 
+    // CardTitle 
+} from "@/components/ui/card";
+// import { Badge } from "@/components/ui/badge";
 import type { Client } from "@/types";
+import {
+    Users, Plus, Search, X, Loader2, Mail,
+    // Building2, 
+    Trash2,
+    // ExternalLink,
+    Globe,
+} from "lucide-react";
+// import Image from "next/image";
 
-// ── Page ──────────────────────────────────────────────────────────
+// ─── Add Client Schema ────────────────────────────────────────────
+const addClientSchema = z.object({
+    name: z.string().min(2, "Name must be at least 2 characters").max(100),
+    email: z.string().min(1, "Email is required").email("Invalid email"),
+    company: z.string().max(100).optional(),
+    country: z.string().max(2).optional(),
+    phone: z.string().max(20).optional(),
+});
+type AddClientFormValues = z.infer<typeof addClientSchema>;
 
-export default function ClientsPage() {
-    const { clients, isLoading, error, refresh, totalBilled } = useClients();
-    const [search, setSearch] = useState("");
-    const [showAddModal, setShowAddModal] = useState(false);
-
-    const filtered = useMemo(
-        () =>
-            clients.filter(
-                (c) =>
-                    c.name.toLowerCase().includes(search.toLowerCase()) ||
-                    c.email.toLowerCase().includes(search.toLowerCase()) ||
-                    c.company?.toLowerCase().includes(search.toLowerCase())
-            ),
-        [clients, search]
-    );
-
-    return (
-        <div className="space-y-6 p-6 animate-fade-up">
-            {/* Header */}
-            <div className="flex items-start justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold tracking-tight">Clients</h1>
-                    <p className="text-sm text-muted-foreground mt-0.5">
-                        {clients.length} client{clients.length !== 1 ? "s" : ""} · {formatCurrency(totalBilled)} total billed
-                    </p>
-                </div>
-                <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={refresh} disabled={isLoading} className="gap-2">
-                        <RefreshCw className={cn("h-3.5 w-3.5", isLoading && "animate-spin")} />
-                        <span className="hidden sm:inline">Refresh</span>
-                    </Button>
-                    <Button size="sm" onClick={() => setShowAddModal(true)} className="gap-2">
-                        <Plus className="h-3.5 w-3.5" />
-                        Add client
-                    </Button>
-                </div>
-            </div>
-
-            {/* Stats row */}
-            <div className="grid gap-4 sm:grid-cols-3">
-                {[
-                    { label: "Total clients", value: clients.length, icon: Users, color: "brand" },
-                    { label: "Total billed", value: formatCurrency(totalBilled), icon: TrendingUp, color: "success" },
-                    { label: "Avg. per client", value: clients.length ? formatCurrency(totalBilled / clients.length) : "$0", icon: Globe, color: "warning" },
-                ].map((s) => {
-                    const Icon = s.icon;
-                    return (
-                        <div key={s.label} className="rounded-xl border border-border bg-card p-4 flex items-center gap-4">
-                            <div className={cn("rounded-xl p-2.5", {
-                                "bg-brand/10 text-brand": s.color === "brand",
-                                "bg-success/10 text-success": s.color === "success",
-                                "bg-warning/10 text-warning": s.color === "warning",
-                            })}>
-                                <Icon className="h-4 w-4" />
-                            </div>
-                            <div>
-                                <p className="text-xs text-muted-foreground uppercase tracking-wider">{s.label}</p>
-                                <p className="text-xl font-bold font-mono tabular-nums mt-0.5">{s.value}</p>
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
-
-            {/* Search */}
-            <div className="relative max-w-sm">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                <input
-                    type="text"
-                    placeholder="Search by name, email, company…"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="w-full rounded-xl border border-border bg-card pl-9 pr-4 py-2.5 text-sm outline-none focus:border-brand/50 transition-colors placeholder:text-muted-foreground/50"
-                />
-            </div>
-
-            {/* Table / content */}
-            {error ? (
-                <ErrorState message={error} onRetry={refresh} />
-            ) : isLoading ? (
-                <LoadingSkeleton />
-            ) : filtered.length === 0 ? (
-                <EmptyState
-                    hasSearch={!!search}
-                    onClear={() => setSearch("")}
-                    onAdd={() => setShowAddModal(true)}
-                />
-            ) : (
-                <ClientTable clients={filtered} />
-            )}
-
-            {/* Add client modal */}
-            {showAddModal && <AddClientModal onClose={() => setShowAddModal(false)} onSuccess={refresh} />}
-        </div>
-    );
-}
-
-// ── Client table ──────────────────────────────────────────────────
-
-function ClientTable({ clients }: { clients: Client[] }) {
-    return (
-        <div className="rounded-xl border border-border bg-card overflow-hidden">
-            {/* Table header */}
-            <div className="grid grid-cols-[1fr_1fr_auto_auto] gap-4 px-4 py-3 border-b border-border bg-muted/30">
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Client</span>
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:block">Company</span>
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Billed</span>
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Since</span>
-            </div>
-
-            {/* Rows */}
-            <div className="divide-y divide-border">
-                {clients.map((client) => (
-                    <ClientRow key={client.id} client={client} />
-                ))}
-            </div>
-        </div>
-    );
-}
-
-function ClientRow({ client }: { client: Client }) {
-    const initials = getInitials(client.name);
-
-    return (
-        <div className="grid grid-cols-[1fr_1fr_auto_auto] gap-4 px-4 py-3.5 items-center hover:bg-muted/20 transition-colors group">
-            {/* Avatar + name + email */}
-            <div className="flex items-center gap-3 min-w-0">
-                <div
-                    className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white"
-                    style={{ background: client.avatar ? undefined : "#2563EB" }}
-                >
-                    {client.avatar ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={client.avatar} alt={client.name} className="w-full h-full rounded-full object-cover" />
-                    ) : (
-                        initials
-                    )}
-                </div>
-                <div className="min-w-0">
-                    <p className="text-sm font-medium truncate">{client.name}</p>
-                    <p className="text-xs text-muted-foreground truncate">{client.email}</p>
-                </div>
-            </div>
-
-            {/* Company */}
-            <div className="hidden md:flex items-center gap-1.5 min-w-0">
-                {client.company ? (
-                    <>
-                        <Building2 className="h-3 w-3 text-muted-foreground shrink-0" />
-                        <span className="text-sm text-muted-foreground truncate">{client.company}</span>
-                    </>
-                ) : (
-                    <span className="text-sm text-muted-foreground/40">—</span>
-                )}
-            </div>
-
-            {/* Billed */}
-            <span className="text-sm font-mono font-medium tabular-nums">
-                {client.totalBilled ? formatCurrency(client.totalBilled) : "—"}
-            </span>
-
-            {/* Date */}
-            <span className="text-xs text-muted-foreground whitespace-nowrap">
-                {formatDate(client.createdAt, { month: "short", year: "numeric" })}
-            </span>
-        </div>
-    );
-}
-
-// ── Add client modal ──────────────────────────────────────────────
-
-interface AddClientModalProps {
+// ─── Add Client Modal ─────────────────────────────────────────────
+function AddClientModal({
+    onClose,
+    onAdd,
+}: {
     onClose: () => void;
-    onSuccess: () => void;
-}
+    onAdd: (data: AddClientFormValues) => Promise<boolean>;
+}) {
+    const {
+        register, handleSubmit,
+        formState: { errors, isSubmitting },
+    } = useForm<AddClientFormValues>({ resolver: zodResolver(addClientSchema) });
 
-function AddClientModal({ onClose, onSuccess }: AddClientModalProps) {
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [form, setForm] = useState({ name: "", email: "", company: "", country: "" });
-    const [errors, setErrors] = useState<Partial<typeof form>>({});
-
-    const validate = () => {
-        const e: Partial<typeof form> = {};
-        if (!form.name.trim()) e.name = "Name is required";
-        if (!form.email.trim()) e.email = "Email is required";
-        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Enter a valid email";
-        return e;
+    const onSubmit = async (values: AddClientFormValues) => {
+        const ok = await onAdd(values);
+        if (ok) onClose();
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        const errs = validate();
-        if (Object.keys(errs).length > 0) { setErrors(errs); return; }
-
-        setIsSubmitting(true);
-        // MOCK: simulate API call
-        await new Promise((r) => setTimeout(r, 800));
-        setIsSubmitting(false);
-        toast.success(`${form.name} added as a client`);
-        onSuccess();
-        onClose();
-    };
+    const inputCls = (err: boolean) =>
+        cn(
+            "w-full rounded-xl px-3 py-2.5 text-sm transition-colors outline-none",
+            "bg-muted/50 border",
+            "focus:border-brand focus:bg-background",
+            err ? "border-destructive/50" : "border-border hover:border-border/80",
+        );
 
     return (
+        /* Backdrop */
         <div
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            style={{ background: "oklch(0 0 0 / 0.6)" }}
+            style={{ background: "oklch(0 0 0 / 0.6)", backdropFilter: "blur(4px)" }}
             onClick={(e) => e.target === e.currentTarget && onClose()}
         >
             <div
-                className="w-full max-w-md rounded-2xl p-6 space-y-5 animate-fade-up"
+                className="w-full max-w-md rounded-2xl p-6 shadow-2xl"
                 style={{ background: "var(--card)", border: "1px solid var(--border)" }}
             >
-                <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-bold">Add new client</h2>
-                    <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors text-xl leading-none">&times;</button>
+                {/* Header */}
+                <div className="flex items-center justify-between mb-5">
+                    <div>
+                        <h2 className="text-base font-semibold">Add new client</h2>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                            Fill in the details below
+                        </p>
+                    </div>
+                    <button
+                        onClick={onClose}
+                        className="rounded-lg p-1.5 hover:bg-muted transition-colors text-muted-foreground"
+                        aria-label="Close"
+                    >
+                        <X className="w-4 h-4" />
+                    </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-                    <ModalField label="Full name *" error={errors.name}>
+                <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
+                    {/* Name */}
+                    <div className="space-y-1.5">
+                        <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                            Full name *
+                        </label>
                         <input
-                            type="text" placeholder="Tunde Adeyemi"
-                            value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                            className="modal-input"
+                            type="text"
+                            placeholder="Tunde Adeyemi"
+                            {...register("name")}
+                            className={inputCls(!!errors.name)}
                         />
-                    </ModalField>
-                    <ModalField label="Email address *" error={errors.email}>
-                        <input
-                            type="email" placeholder="tunde@company.com"
-                            value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                            className="modal-input"
-                        />
-                    </ModalField>
-                    <div className="grid grid-cols-2 gap-3">
-                        <ModalField label="Company">
-                            <input
-                                type="text" placeholder="TechStart Nigeria"
-                                value={form.company} onChange={(e) => setForm((f) => ({ ...f, company: e.target.value }))}
-                                className="modal-input"
-                            />
-                        </ModalField>
-                        <ModalField label="Country">
-                            <input
-                                type="text" placeholder="NG"
-                                value={form.country} onChange={(e) => setForm((f) => ({ ...f, country: e.target.value }))}
-                                className="modal-input"
-                            />
-                        </ModalField>
+                        {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
                     </div>
 
+                    {/* Email */}
+                    <div className="space-y-1.5">
+                        <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                            Email *
+                        </label>
+                        <input
+                            type="email"
+                            placeholder="tunde@company.com"
+                            {...register("email")}
+                            className={inputCls(!!errors.email)}
+                        />
+                        {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
+                    </div>
+
+                    {/* Company + Country row */}
+                    <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-1.5">
+                            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                                Company
+                            </label>
+                            <input
+                                type="text"
+                                placeholder="Acme Ltd"
+                                {...register("company")}
+                                className={inputCls(!!errors.company)}
+                            />
+                        </div>
+                        <div className="space-y-1.5">
+                            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                                Country
+                            </label>
+                            <input
+                                type="text"
+                                placeholder="NG"
+                                maxLength={2}
+                                {...register("country")}
+                                className={inputCls(!!errors.country)}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Phone */}
+                    <div className="space-y-1.5">
+                        <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                            Phone
+                        </label>
+                        <input
+                            type="tel"
+                            placeholder="+234 800 000 0000"
+                            {...register("phone")}
+                            className={inputCls(false)}
+                        />
+                    </div>
+
+                    {/* Actions */}
                     <div className="flex gap-3 pt-2">
-                        <Button type="button" variant="outline" onClick={onClose} className="flex-1">Cancel</Button>
-                        <Button type="submit" disabled={isSubmitting} className="flex-1 gap-2">
-                            {isSubmitting ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Plus className="h-3.5 w-3.5" />}
-                            Add client
-                        </Button>
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="flex-1 py-2.5 rounded-xl text-sm font-medium border border-border hover:bg-muted transition-colors"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className={cn(
+                                "flex-1 flex items-center justify-center gap-2",
+                                "py-2.5 rounded-xl text-sm font-semibold text-white",
+                                "bg-brand hover:bg-brand/90 transition-colors",
+                                "disabled:opacity-60 disabled:cursor-not-allowed",
+                            )}
+                        >
+                            {isSubmitting ? (
+                                <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Adding...</>
+                            ) : (
+                                <><Plus className="w-3.5 h-3.5" /> Add client</>
+                            )}
+                        </button>
                     </div>
                 </form>
             </div>
-
-            {/* Inline styles for modal inputs — avoids Tailwind conflict */}
-            <style>{`
-        .modal-input {
-          width: 100%;
-          border-radius: 0.625rem;
-          border: 1px solid var(--border);
-          background: var(--muted);
-          padding: 0.625rem 0.875rem;
-          font-size: 0.875rem;
-          color: var(--foreground);
-          outline: none;
-          transition: border-color 0.15s;
-        }
-        .modal-input:focus { border-color: var(--primary); }
-        .modal-input::placeholder { color: var(--muted-foreground); opacity: 0.5; }
-      `}</style>
         </div>
     );
 }
 
-function ModalField({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
+// ─── Client Row ───────────────────────────────────────────────────
+function ClientRow({
+    client,
+    onDelete,
+}: {
+    client: Client;
+    onDelete: (id: string) => void;
+}) {
+    const initials = getInitials(client.name);
+
     return (
-        <div className="space-y-1.5">
-            <label className="block text-xs font-medium text-muted-foreground">{label}</label>
-            {children}
-            {error && <p className="text-xs text-destructive">{error}</p>}
-        </div>
+        <tr className="border-b border-border/50 hover:bg-muted/30 transition-colors group">
+            {/* Name + avatar */}
+            <td className="px-4 py-3">
+                <div className="flex items-center gap-3">
+                    {client.avatar ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                            src={client.avatar}
+                            alt={client.name}
+                            width={10}
+                            height={10}
+                            // w-8 h-8 
+                            className="w-8 h-8 rounded-full shrink-0"
+                        />
+                    ) : (
+                        <div className="w-8 h-8 rounded-full bg-brand/10 flex items-center justify-center shrink-0">
+                            <span className="text-xs font-bold text-brand">{initials}</span>
+                        </div>
+                    )}
+                    <div className="min-w-0">
+                        <p className="text-sm font-medium truncate">{client.name}</p>
+                        {client.company && (
+                            <p className="text-xs text-muted-foreground truncate">{client.company}</p>
+                        )}
+                    </div>
+                </div>
+            </td>
+
+            {/* Email */}
+            <td className="px-4 py-3">
+                <a
+                    href={`mailto:${client.email}`}
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
+                >
+                    <Mail className="w-3 h-3 shrink-0" />
+                    <span className="truncate">{client.email}</span>
+                </a>
+            </td>
+
+            {/* Country */}
+            <td className="px-4 py-3">
+                {client.country ? (
+                    <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                        <Globe className="w-3 h-3" />
+                        {client.country}
+                    </div>
+                ) : (
+                    <span className="text-muted-foreground/30 text-sm">—</span>
+                )}
+            </td>
+
+            {/* Total billed */}
+            <td className="px-4 py-3">
+                <span className="text-sm font-mono font-medium">
+                    {client.totalBilled ? formatCurrency(client.totalBilled) : "—"}
+                </span>
+            </td>
+
+            {/* Added date */}
+            <td className="px-4 py-3">
+                <span className="text-sm text-muted-foreground">
+                    {formatDate(client.createdAt)}
+                </span>
+            </td>
+
+            {/* Actions */}
+            <td className="px-4 py-3">
+                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                        className="p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                        onClick={() => onDelete(client.id)}
+                        aria-label="Delete client"
+                    >
+                        <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                </div>
+            </td>
+        </tr>
     );
 }
 
-// ── Empty / Loading / Error states ────────────────────────────────
+// ─── Page ─────────────────────────────────────────────────────────
+export default function ClientsPage() {
+    const { clients, isLoading, error, addClient, deleteClient } = useClients();
+    const [search, setSearch] = useState("");
+    const [showModal, setShowModal] = useState(false);
+
+    const filtered = useMemo(() => {
+        const q = search.toLowerCase().trim();
+        if (!q) return clients;
+        return clients.filter(
+            (c) =>
+                c.name.toLowerCase().includes(q) ||
+                c.email.toLowerCase().includes(q) ||
+                c.company?.toLowerCase().includes(q),
+        );
+    }, [clients, search]);
+
+    return (
+        <>
+            {showModal && (
+                <AddClientModal
+                    onClose={() => setShowModal(false)}
+                    onAdd={addClient}
+                />
+            )}
+
+            <div className="space-y-6 p-6 animate-fade-up">
+                {/* Header */}
+                <div className="flex items-start justify-between gap-4">
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-tight">Clients</h1>
+                        <p className="text-sm text-muted-foreground mt-0.5">
+                            {clients.length} client{clients.length !== 1 ? "s" : ""} total
+                        </p>
+                    </div>
+                    <button
+                        onClick={() => setShowModal(true)}
+                        className="flex items-center gap-2 bg-brand hover:bg-brand/90 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors shrink-0"
+                    >
+                        <Plus className="w-4 h-4" />
+                        Add client
+                    </button>
+                </div>
+
+                {/* Search */}
+                <div className="relative max-w-sm">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <input
+                        type="text"
+                        placeholder="Search clients..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className={cn(
+                            "w-full pl-9 pr-4 py-2.5 rounded-xl text-sm",
+                            "bg-muted/50 border border-border",
+                            "focus:outline-none focus:border-brand focus:bg-background",
+                            "placeholder:text-muted-foreground/50 transition-colors",
+                        )}
+                    />
+                    {search && (
+                        <button
+                            onClick={() => setSearch("")}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        >
+                            <X className="w-3.5 h-3.5" />
+                        </button>
+                    )}
+                </div>
+
+                {/* Table */}
+                <Card>
+                    <CardContent className="p-0">
+                        {isLoading ? (
+                            <LoadingSkeleton />
+                        ) : error ? (
+                            <ErrorState message={error} />
+                        ) : filtered.length === 0 ? (
+                            <EmptyState
+                                hasSearch={!!search}
+                                onAdd={() => setShowModal(true)}
+                            />
+                        ) : (
+                            <div className="overflow-x-auto">
+                                <table className="w-full">
+                                    <thead>
+                                        <tr
+                                            className="border-b border-border text-left"
+                                            style={{ background: "var(--muted)" }}
+                                        >
+                                            {["Client", "Email", "Country", "Total Billed", "Added", ""].map(
+                                                (h) => (
+                                                    <th
+                                                        key={h}
+                                                        className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider"
+                                                    >
+                                                        {h}
+                                                    </th>
+                                                ),
+                                            )}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {filtered.map((client) => (
+                                            <ClientRow
+                                                key={client.id}
+                                                client={client}
+                                                onDelete={deleteClient}
+                                            />
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+            </div>
+        </>
+    );
+}
+
+// ─── Sub-components ───────────────────────────────────────────────
 
 function LoadingSkeleton() {
     return (
-        <div className="rounded-xl border border-border bg-card overflow-hidden animate-pulse">
-            <div className="px-4 py-3 border-b border-border bg-muted/30 h-10" />
-            {[1, 2, 3].map((i) => (
-                <div key={i} className="flex items-center gap-4 px-4 py-4 border-b border-border last:border-0">
+        <div className="divide-y divide-border">
+            {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-4 px-4 py-4 animate-pulse">
                     <div className="w-8 h-8 rounded-full bg-muted" />
                     <div className="flex-1 space-y-1.5">
                         <div className="h-3.5 w-32 bg-muted rounded-full" />
-                        <div className="h-3 w-48 bg-muted/60 rounded-full" />
+                        <div className="h-3 w-24 bg-muted/60 rounded-full" />
                     </div>
-                    <div className="h-4 w-16 bg-muted rounded-full" />
-                    <div className="h-3 w-20 bg-muted/60 rounded-full" />
+                    <div className="h-3.5 w-40 bg-muted rounded-full" />
+                    <div className="h-3.5 w-16 bg-muted rounded-full" />
+                    <div className="h-3.5 w-20 bg-muted rounded-full" />
                 </div>
             ))}
         </div>
     );
 }
 
-function EmptyState({ hasSearch, onClear, onAdd }: { hasSearch: boolean; onClear: () => void; onAdd: () => void }) {
+function EmptyState({
+    hasSearch,
+    onAdd,
+}: {
+    hasSearch: boolean;
+    onAdd: () => void;
+}) {
     return (
-        <div className="flex flex-col items-center justify-center py-20 gap-4 rounded-xl border border-border border-dashed bg-card/50">
-            <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
-                <Users className="h-5 w-5 text-muted-foreground" />
+        <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+            <div className="w-12 h-12 rounded-2xl bg-muted flex items-center justify-center mb-4">
+                <Users className="w-5 h-5 text-muted-foreground" />
             </div>
-            <div className="text-center space-y-1">
-                <p className="font-medium">{hasSearch ? "No clients found" : "No clients yet"}</p>
-                <p className="text-sm text-muted-foreground">
-                    {hasSearch ? "Try a different search term" : "Add your first client to get started"}
-                </p>
-            </div>
-            <Button size="sm" onClick={hasSearch ? onClear : onAdd} variant={hasSearch ? "outline" : "default"} className="gap-2">
-                {hasSearch ? "Clear search" : <><Plus className="h-3.5 w-3.5" /> Add client</>}
-            </Button>
+            <p className="text-sm font-medium">
+                {hasSearch ? "No clients match your search" : "No clients yet"}
+            </p>
+            <p className="text-xs text-muted-foreground mt-1 mb-4">
+                {hasSearch
+                    ? "Try a different name, email, or company"
+                    : "Add your first client to get started"}
+            </p>
+            {!hasSearch && (
+                <button
+                    onClick={onAdd}
+                    className="flex items-center gap-2 bg-brand text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-brand/90 transition-colors"
+                >
+                    <Plus className="w-4 h-4" />
+                    Add your first client
+                </button>
+            )}
         </div>
     );
 }
 
-function ErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
+function ErrorState({ message }: { message: string }) {
     return (
-        <div className="flex flex-col items-center justify-center py-16 gap-3">
+        <div className="flex items-center gap-2 m-4 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3">
             <p className="text-sm text-destructive">{message}</p>
-            <Button size="sm" variant="outline" onClick={onRetry}>Try again</Button>
         </div>
     );
 }

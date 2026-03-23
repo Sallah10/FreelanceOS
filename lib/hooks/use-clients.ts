@@ -2,7 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { ClientsAPI } from "@/lib/api";
-import type { Client } from "@/types";
+import type {
+  Client,
+  //  ApiResponse
+} from "@/types";
 import { toast } from "sonner";
 
 interface UseClientsReturn {
@@ -10,7 +13,10 @@ interface UseClientsReturn {
   isLoading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
-  totalBilled: number;
+  addClient: (
+    client: Omit<Client, "id" | "userId" | "createdAt">,
+  ) => Promise<boolean>;
+  deleteClient: (id: string) => Promise<boolean>;
 }
 
 export function useClients(): UseClientsReturn {
@@ -18,7 +24,7 @@ export function useClients(): UseClientsReturn {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchClients = useCallback(async () => {
+  const fetch = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
@@ -27,21 +33,64 @@ export function useClients(): UseClientsReturn {
         setClients(res.data);
       } else {
         setError(res.error ?? "Failed to load clients");
-        toast.error("Could not load clients");
       }
     } catch {
       setError("Network error loading clients");
-      toast.error("Network error — check your connection");
     } finally {
       setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchClients();
-  }, [fetchClients]);
+    fetch();
+  }, [fetch]);
 
-  const totalBilled = clients.reduce((sum, c) => sum + (c.totalBilled ?? 0), 0);
+  const addClient = useCallback(
+    async (
+      newClient: Omit<Client, "id" | "userId" | "createdAt">,
+    ): Promise<boolean> => {
+      try {
+        const res = await ClientsAPI.createClient(newClient);
+        if (res.success && res.data) {
+          setClients((prev) => [res.data!, ...prev]);
+          toast.success("Client added", {
+            description: `${newClient.name} has been added.`,
+          });
+          return true;
+        }
+        toast.error("Failed to add client", { description: res.error });
+        return false;
+      } catch {
+        toast.error("Network error", { description: "Could not add client." });
+        return false;
+      }
+    },
+    [],
+  );
 
-  return { clients, isLoading, error, refresh: fetchClients, totalBilled };
+  const deleteClient = useCallback(
+    async (id: string): Promise<boolean> => {
+      const client = clients.find((c) => c.id === id);
+      try {
+        const res = await ClientsAPI.deleteClient(id);
+        if (res.success) {
+          setClients((prev) => prev.filter((c) => c.id !== id));
+          toast.success("Client removed", {
+            description: `${client?.name ?? "Client"} deleted.`,
+          });
+          return true;
+        }
+        toast.error("Failed to delete client");
+        return false;
+      } catch {
+        toast.error("Network error", {
+          description: "Could not delete client.",
+        });
+        return false;
+      }
+    },
+    [clients],
+  );
+
+  return { clients, isLoading, error, refresh: fetch, addClient, deleteClient };
 }

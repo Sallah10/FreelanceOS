@@ -2,26 +2,33 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 /**
- * middleware.ts — Route Guard
+ * middleware.ts — Route guard
  *
- * Lives at the project ROOT (same level as app/, not inside it).
- * Runs on the Edge runtime BEFORE any page renders — zero flash of protected content.
+ * HOW NEXT.JS MIDDLEWARE WORKS (important concept):
+ * This file runs on the EDGE — before React, before the page renders,
+ * before even the layout. It's the bouncer at the door.
  *
- * PROTECTED: anything under /dashboard, /clients, /invoices, /projects, /analytics, /settings
- * PUBLIC:    /, /login, /register, /api/*
+ * When a user navigates to /dashboard:
+ * 1. Edge runtime reads this middleware FIRST
+ * 2. We check for the token cookie
+ * 3. If no token → redirect to /login instantly (no flash of dashboard)
+ * 4. If token exists → let the request through
  *
- * Auth strategy (mock phase):
- *   We check for a "fos_token" cookie. When the user logs in, we set this cookie.
- *   When the backend is live, the token is verified server-side.
- *   For now, presence of the cookie = authenticated.
+ * WHY COOKIE AND NOT LOCALSTORAGE?
+ * localStorage is not accessible in Edge/Node environments — only in the browser.
+ * Middleware runs on the server, so it can only read cookies.
  *
- * WHY COOKIE not localStorage?
- *   middleware.ts runs on the server/edge — it has no access to localStorage (browser only).
- *   Cookies are sent with every request, so the edge can read them.
- *   This is also the more secure pattern (httpOnly cookies resist XSS).
+ * FLOW:
+ * - On login: we SET a cookie (in addition to localStorage) so middleware can read it
+ * - On logout: we CLEAR the cookie
+ * - localStorage is still used for the API client (axios interceptor)
+ *
+ * NOTE: In USE_MOCK mode, we use a simple presence check.
+ * In production, you'd verify the JWT signature here using jose/jsonwebtoken.
  */
 
-const PROTECTED_PATHS = [
+// Routes that require authentication
+const PROTECTED_PREFIXES = [
   "/dashboard",
   "/clients",
   "/projects",
@@ -31,36 +38,50 @@ const PROTECTED_PATHS = [
   "/settings",
 ];
 
-const PUBLIC_PATHS = ["/", "/login", "/register"];
+// Routes that logged-in users shouldn't see (redirect to dashboard)
+const AUTH_ROUTES = ["/login", "/register"];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Check if this path is public (explicit allowlist)
-  const isPublic = PUBLIC_PATHS.some((path) => pathname === path);
+  // Check for auth token in cookies
+  // We use a cookie named "fos_session" set during login
+  const token = request.cookies.get("fos_session")?.value;
 
-  // Check if this path needs protection
-  const isProtected = PROTECTED_PATHS.some((path) => pathname.startsWith(path));
+  const isProtected = PROTECTED_PREFIXES.some((prefix) =>
+    pathname.startsWith(prefix),
+  );
+  const isAuthRoute = AUTH_ROUTES.some((route) => pathname.startsWith(route));
 
-  // If it's public OR not protected, allow access
-  if (isPublic || !isProtected) return NextResponse.next();
-
-  // Look for auth token in cookies
-  const token = request.cookies.get("fos_token")?.value;
-
-  if (!token) {
-    // Redirect to login, preserving the intended destination
+  // Redirect unauthenticated users away from protected routes
+  if (isProtected && !token) {
     const loginUrl = new URL("/login", request.url);
+    // Preserve the intended destination so we can redirect back after login
     loginUrl.searchParams.set("from", pathname);
     return NextResponse.redirect(loginUrl);
+  }
+
+  // Redirect authenticated users away from login/register
+  if (isAuthRoute && token) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return NextResponse.next();
 }
 
+/**
+ * matcher tells Next.js which routes to run middleware on.
+ * We exclude static assets and API routes — no need to check auth there.
+ */
 export const config = {
-  // Only run middleware on these paths — skip static files, images, fonts
   matcher: [
+    /*
+     * Match all paths EXCEPT:
+     * - _next/static (static files)
+     * - _next/image  (image optimization)
+     * - favicon.ico
+     * - Public assets (images, fonts, etc.)
+     */
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

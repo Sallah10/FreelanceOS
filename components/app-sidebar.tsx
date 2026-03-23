@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { useAuth } from "@/lib/context/auth-context";
+import { getInitials } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -52,11 +54,15 @@ const BOTTOM_NAV: NavItem[] = [
 export function AppSidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
+  const { user, logout } = useAuth();
+
+  const displayName = user ? `${user.firstName} ${user.lastName}` : "Account";
+  const initials = user ? getInitials(displayName) : "??";
 
   const sidebarWidth = collapsed ? "w-[64px]" : "w-[220px]";
 
   return (
-    <TooltipProvider>
+    <TooltipProvider >
       <aside
         className={cn(
           "relative flex flex-col h-full border-r border-sidebar-border bg-sidebar",
@@ -112,9 +118,7 @@ export function AppSidebar() {
             <NavLink
               key={item.href}
               item={item}
-              isActive={
-                pathname === item.href || pathname.startsWith(`${item.href}/`)
-              }
+              isActive={pathname === item.href || pathname.startsWith(`${item.href}/`)}
               collapsed={collapsed}
             />
           ))}
@@ -133,8 +137,9 @@ export function AppSidebar() {
 
           {/* User / Sign out */}
           <Tooltip>
-            <TooltipTrigger>
-              <button
+            <TooltipTrigger >
+              <Button
+                onClick={logout}
                 className={cn(
                   "flex w-full items-center gap-3 rounded-md px-2 py-2",
                   "text-sm text-sidebar-foreground/60 hover:text-sidebar-foreground",
@@ -142,17 +147,14 @@ export function AppSidebar() {
                   collapsed ? "justify-center" : "",
                 )}
               >
-                {/* Avatar */}
                 <div className="shrink-0 w-6 h-6 rounded-full bg-brand/20 flex items-center justify-center">
-                  <span className="text-[10px] font-bold text-brand">BB</span>
+                  <span className="text-[10px] font-bold text-brand">{initials}</span>
                 </div>
                 {!collapsed && (
-                  <span className="flex-1 text-left truncate text-xs">
-                    Bello
-                  </span>
+                  <span className="flex-1 text-left truncate text-xs">{displayName}</span>
                 )}
                 {!collapsed && <LogOut className="h-3.5 w-3.5 shrink-0" />}
-              </button>
+              </Button>
             </TooltipTrigger>
             {collapsed && (
               <TooltipContent side="right">
@@ -208,7 +210,7 @@ function NavLink({ item, isActive, collapsed }: NavLinkProps) {
   if (collapsed) {
     return (
       <Tooltip>
-        <TooltipTrigger>{linkContent}</TooltipTrigger>
+        <TooltipTrigger >{linkContent}</TooltipTrigger>
         <TooltipContent side="right">
           <p>{item.label}</p>
         </TooltipContent>
