@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } },
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const { id } = params;
+  const { id } = await params;
 
-  // In production, you'd generate a PDF using react-pdf
-  // For now, return a placeholder response
   return NextResponse.json(
-    { message: "PDF generation coming soon" },
+    { message: `PDF generation for invoice ${id} coming soon` },
     { status: 501 },
   );
 }
