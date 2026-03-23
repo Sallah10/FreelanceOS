@@ -27,10 +27,17 @@ export function useProjects(): UseProjectsReturn {
     setError(null);
     try {
       const res = await ProjectsAPI.getProjects();
-      if (res.success && res.data) setProjects(res.data);
-      else setError(res.error ?? "Failed to load projects");
-    } catch {
+      if (res.success && res.data) {
+        setProjects(Array.isArray(res.data) ? res.data : []);
+      } else {
+        setError(res.error ?? "Failed to load projects");
+
+        setProjects([]);
+      }
+    } catch (err) {
       setError("Network error loading projects");
+      console.error(err);
+      setProjects([]);
     } finally {
       setIsLoading(false);
     }
@@ -47,7 +54,7 @@ export function useProjects(): UseProjectsReturn {
       try {
         const res = await ProjectsAPI.createProject(data);
         if (res.success && res.data) {
-          setProjects((prev) => [res.data!, ...prev]);
+          setProjects((prev) => [res.data as Project, ...prev]);
           toast.success("Project created", {
             description: `"${data.name}" is ready.`,
           });

@@ -28,12 +28,14 @@ export function useInvoices(): UseInvoicesReturn {
     try {
       const res = await InvoicesAPI.getInvoices();
       if (res.success && res.data) {
-        setInvoices(res.data);
+        setInvoices(Array.isArray(res.data) ? res.data : []);
       } else {
         setError(res.error ?? "Failed to load invoices");
+        setInvoices([]);
       }
     } catch {
       setError("Network error loading invoices");
+      setInvoices([]);
     } finally {
       setIsLoading(false);
     }
@@ -50,7 +52,7 @@ export function useInvoices(): UseInvoicesReturn {
       try {
         const res = await InvoicesAPI.createInvoice(data);
         if (res.success && res.data) {
-          setInvoices((prev) => [res.data!, ...prev]);
+          setInvoices((prev) => [res.data as Invoice, ...prev]);
           toast.success("Invoice created", {
             description: `${res.data.number} is ready to send.`,
           });

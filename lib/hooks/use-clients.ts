@@ -30,12 +30,14 @@ export function useClients(): UseClientsReturn {
     try {
       const res = await ClientsAPI.getClients();
       if (res.success && res.data) {
-        setClients(res.data);
+        setClients(Array.isArray(res.data) ? res.data : []);
       } else {
         setError(res.error ?? "Failed to load clients");
+        setClients([]);
       }
     } catch {
       setError("Network error loading clients");
+      setClients([]);
     } finally {
       setIsLoading(false);
     }

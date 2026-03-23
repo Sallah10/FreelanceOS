@@ -27,6 +27,8 @@ import {
   LogOut,
 } from "lucide-react";
 
+import { AlertTriangle } from "lucide-react";
+
 // --------------- Nav Config ---------------
 
 interface NavItem {
@@ -55,6 +57,7 @@ export function AppSidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const displayName = user ? `${user.firstName} ${user.lastName}` : "Account";
   const initials = user ? getInitials(displayName) : "??";
@@ -138,10 +141,10 @@ export function AppSidebar() {
           {/* User / Sign out */}
           <Tooltip>
             <TooltipTrigger >
-              <Button
-                onClick={logout}
+              <div
+                onClick={() => setShowLogoutModal(true)}
                 className={cn(
-                  "flex w-full items-center gap-3 rounded-md px-2 py-2",
+                  "flex w-full items-center gap-3 rounded-md px-2 py-2 cursor-pointer",
                   "text-sm text-sidebar-foreground/60 hover:text-sidebar-foreground",
                   "hover:bg-sidebar-accent transition-colors",
                   collapsed ? "justify-center" : "",
@@ -154,7 +157,7 @@ export function AppSidebar() {
                   <span className="flex-1 text-left truncate text-xs">{displayName}</span>
                 )}
                 {!collapsed && <LogOut className="h-3.5 w-3.5 shrink-0" />}
-              </Button>
+              </div>
             </TooltipTrigger>
             {collapsed && (
               <TooltipContent side="right">
@@ -162,6 +165,50 @@ export function AppSidebar() {
               </TooltipContent>
             )}
           </Tooltip>
+
+          {/* Logout Modal */}
+          {showLogoutModal && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center p-4"
+              style={{ background: "oklch(0 0 0 / 0.6)", backdropFilter: "blur(4px)" }}
+              onClick={() => setShowLogoutModal(false)}
+            >
+              <div
+                className="w-full max-w-sm rounded-2xl p-6"
+                style={{ background: "var(--card)", border: "1px solid var(--border)" }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex flex-col items-center text-center space-y-4">
+                  <div className="w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center">
+                    <AlertTriangle className="w-6 h-6 text-destructive" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold">Sign out?</h3>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      You&apos;ll need to sign in again to access your dashboard.
+                    </p>
+                  </div>
+                  <div className="flex gap-3 w-full pt-2">
+                    <button
+                      onClick={() => setShowLogoutModal(false)}
+                      className="flex-1 py-2.5 rounded-xl text-sm font-medium border border-border hover:bg-muted transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowLogoutModal(false);
+                        logout();
+                      }}
+                      className="flex-1 py-2.5 rounded-xl text-sm font-semibold bg-destructive text-white hover:bg-destructive/90 transition-colors"
+                    >
+                      Sign out
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </aside>
     </TooltipProvider>

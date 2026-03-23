@@ -17,6 +17,7 @@ import {
   TrendingUp,
   DollarSign,
 } from "lucide-react";
+import { MarketingNav } from "@/components/marketing-nav";
 
 // ─── Typewriter cycling words ─────────────────────────────────────
 const CYCLE_WORDS = ["invoices", "clients", "payments", "projects", "proposals"];
@@ -326,7 +327,7 @@ export default function LandingPage() {
       style={{ background: "oklch(0.10 0.02 250)", color: "oklch(0.95 0.005 250)" }}
     >
       {/* ── Nav ── */}
-      <nav
+      {/* <nav
         className="sticky top-0 z-50 flex items-center justify-between px-6 py-4 md:px-12"
         style={{
           background: "oklch(0.10 0.02 250 / 0.8)",
@@ -340,17 +341,11 @@ export default function LandingPage() {
           </div>
           <span className="font-bold text-sm tracking-tight">FreelanceOS</span>
         </div>
-
+      
         <div className="hidden md:flex items-center gap-8 text-sm text-white/50">
-          {["Features", "Pricing", "About"].map((item) => (
-            <a
-              key={item}
-              href={`#${item.toLowerCase()}`}
-              className="hover:text-white transition-colors"
-            >
-              {item}
-            </a>
-          ))}
+          <a href="#features" className="hover:text-white transition-colors">Features</a>
+          <Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link>
+          <Link href="/about" className="hover:text-white transition-colors">About</Link>
         </div>
 
         <div className="flex items-center gap-3">
@@ -368,7 +363,8 @@ export default function LandingPage() {
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
-      </nav>
+      </nav> */}
+      <MarketingNav />
 
       {/* ── Hero ── */}
       <section className="relative px-6 pt-24 pb-32 md:px-12 overflow-hidden">
@@ -419,7 +415,7 @@ export default function LandingPage() {
 
           <p className="text-center text-lg md:text-xl text-white/40 max-w-xl mx-auto mb-10 leading-relaxed">
             African freelancers deserve world-class tools. Manage clients, track
-            projects, and get paid internationally — all powered by Raenest.
+            projects, and get paid internationally - all powered by Raenest.
           </p>
 
           {/* CTAs */}
@@ -431,14 +427,21 @@ export default function LandingPage() {
               Start for free
               <ArrowRight className="w-4 h-4" />
             </Link>
-            <Link
-              href="/dashboard"
+            <button
+              onClick={() => {
+                // Clear any existing auth first
+                localStorage.removeItem("fos_token");
+                localStorage.removeItem("fos_session");
+                // Start demo session
+                localStorage.setItem("fos_demo_session", "true");
+                window.location.href = "/dashboard";
+              }}
               className="flex items-center gap-2 text-white/60 hover:text-white font-medium px-6 py-3 rounded-xl transition-colors"
               style={{ border: "1px solid oklch(1 0 0 / 10%)" }}
             >
               View demo
               <ChevronRight className="w-4 h-4" />
-            </Link>
+            </button>
           </div>
 
           {/* Social proof micro-text */}
@@ -784,9 +787,9 @@ export default function LandingPage() {
           </p>
 
           <div className="flex items-center gap-6 text-xs text-white/30">
-            <a href="#" className="hover:text-white/50 transition-colors">Privacy</a>
-            <a href="#" className="hover:text-white/50 transition-colors">Terms</a>
-            <a href="#" className="hover:text-white/50 transition-colors">GitHub</a>
+            <Link href="/privacy" className="hover:text-white/50 transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-white/50 transition-colors">Terms</Link>
+            <a href="https://github.com/sallah10/freelanceos" target="_blank" rel="noopener noreferrer" className="hover:text-white/50 transition-colors">GitHub</a>
           </div>
         </div>
       </footer>

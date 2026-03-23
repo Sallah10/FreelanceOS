@@ -21,7 +21,9 @@ import type {
   DashboardStats,
   EarningsDataPoint,
   ActivityItem,
+  ProposalStatus,
 } from "@/types";
+import { toast } from "sonner";
 
 // --------------- Axios Instance ---------------
 
@@ -59,7 +61,7 @@ apiClient.interceptors.response.use(
  * Set to false once your friend deploys the backend.
  * Everything below respects this flag consistently.
  */
-const USE_MOCK = true;
+const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK !== "false";
 
 // --------------- Utilities ---------------
 
@@ -620,6 +622,40 @@ export const InvoicesAPI = {
     if (idx !== -1) mockInvoices.splice(idx, 1);
     return mockSuccess(null);
   },
+
+  generatePaymentLink: async (
+    invoiceId: string,
+    amount: number,
+    currency: string,
+  ): Promise<ApiResponse<{ link: string }>> => {
+    if (!USE_MOCK) {
+      const { data } = await apiClient.post<ApiResponse<{ link: string }>>(
+        `/invoices/${invoiceId}/payment-link`,
+        { amount, currency },
+      );
+      return data;
+    }
+    await delay(500);
+    // Mock Raenest payment link — in production, this would call Raenest API
+    const mockLink = `https://pay.raenest.com/fos-${invoiceId}-${Date.now()}`;
+    return mockSuccess({ link: mockLink });
+  },
+
+  sendInvoice: async (
+    invoiceId: string,
+    email: string,
+  ): Promise<ApiResponse<null>> => {
+    if (!USE_MOCK) {
+      const { data } = await apiClient.post<ApiResponse<null>>(
+        `/invoices/${invoiceId}/send`,
+        { email },
+      );
+      return data;
+    }
+    await delay(600);
+    toast.success("Invoice sent", { description: `Sent to ${email}` });
+    return mockSuccess(null);
+  },
 };
 
 export const MilestonesAPI = {
@@ -643,6 +679,8 @@ export const MilestonesAPI = {
   },
 };
 
+// Add to lib/api.ts, after ProposalsAPI = { ... } but before export
+
 export const ProposalsAPI = {
   getProposals: async (): Promise<ApiResponse<Proposal[]>> => {
     if (!USE_MOCK) {
@@ -651,6 +689,128 @@ export const ProposalsAPI = {
       return data;
     }
     await delay(600);
-    return mockSuccess([]);
+    // Return mock proposals
+    const mockProposals: Proposal[] = [
+      {
+        id: "prop_1",
+        userId: "u_1",
+        clientId: "c_1",
+        client: mockClients[0],
+        title: "E-commerce Platform Redesign Proposal",
+        content:
+          "Complete redesign of the existing storefront with new checkout flow. Includes UI design, frontend development, and testing.",
+        status: "sent",
+        amount: 4500,
+        currency: "USD",
+        validUntil: "2026-04-15T00:00:00Z",
+        createdAt: "2026-02-20T09:00:00Z",
+        updatedAt: "2026-02-20T09:00:00Z",
+      },
+      {
+        id: "prop_2",
+        userId: "u_1",
+        clientId: "c_2",
+        client: mockClients[1],
+        title: "Mobile App MVP Proposal",
+        content:
+          "React Native MVP for task management startup. Includes authentication, task CRUD, and push notifications.",
+        status: "draft",
+        amount: 8000,
+        currency: "USD",
+        createdAt: "2026-03-01T10:00:00Z",
+        updatedAt: "2026-03-01T10:00:00Z",
+      },
+    ];
+    return mockSuccess(mockProposals);
+  },
+
+  getProposal: async (id: string): Promise<ApiResponse<Proposal>> => {
+    if (!USE_MOCK) {
+      const { data } = await apiClient.get<ApiResponse<Proposal>>(
+        `/proposals/${id}`,
+      );
+      return data;
+    }
+    await delay(300);
+    const mockProposals: Proposal[] = [
+      {
+        id: "prop_1",
+        userId: "u_1",
+        clientId: "c_1",
+        client: mockClients[0],
+        title: "E-commerce Platform Redesign Proposal",
+        content: "Complete redesign...",
+        status: "sent",
+        amount: 4500,
+        currency: "USD",
+        validUntil: "2026-04-15T00:00:00Z",
+        createdAt: "2026-02-20T09:00:00Z",
+        updatedAt: "2026-02-20T09:00:00Z",
+      },
+    ];
+    const proposal = mockProposals.find((p) => p.id === id);
+    if (!proposal) return { success: false, error: "Proposal not found" };
+    return mockSuccess(proposal);
+  },
+
+  createProposal: async (
+    payload: Omit<Proposal, "id" | "userId" | "createdAt" | "updatedAt">,
+  ): Promise<ApiResponse<Proposal>> => {
+    if (!USE_MOCK) {
+      const { data } = await apiClient.post<ApiResponse<Proposal>>(
+        "/proposals",
+        payload,
+      );
+      return data;
+    }
+    await delay(700);
+    const newProposal: Proposal = {
+      ...payload,
+      id: `prop_${Date.now()}`,
+      userId: "u_1",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    return mockSuccess(newProposal);
+  },
+
+  updateProposal: async (
+    id: string,
+    payload: Partial<Proposal>,
+  ): Promise<ApiResponse<Proposal>> => {
+    if (!USE_MOCK) {
+      const { data } = await apiClient.put<ApiResponse<Proposal>>(
+        `/proposals/${id}`,
+        payload,
+      );
+      return data;
+    }
+    await delay(400);
+    // Mock update — in real implementation, you'd store this
+    const updatedProposal: Proposal = {
+      id,
+      userId: "u_1",
+      clientId: "c_1",
+      client: mockClients[0],
+      title: "Updated Proposal",
+      content: "Updated content",
+      status: (payload.status as ProposalStatus) || "draft",
+      amount: 5000,
+      currency: "USD",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    return mockSuccess(updatedProposal);
+  },
+
+  deleteProposal: async (id: string): Promise<ApiResponse<null>> => {
+    if (!USE_MOCK) {
+      const { data } = await apiClient.delete<ApiResponse<null>>(
+        `/proposals/${id}`,
+      );
+      return data;
+    }
+    await delay(400);
+    return mockSuccess(null);
   },
 };

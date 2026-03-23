@@ -197,7 +197,7 @@ export default function DashboardPage() {
           ) : earningsData.length === 0 ? (
             <EmptyChartState />
           ) : (
-            <div className="h-70">
+            <div className="h-[280px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                   data={earningsData}
@@ -281,7 +281,7 @@ export default function DashboardPage() {
           isLoading={isLoading.stats}
           chartHeight={280}
         >
-          <div className="h-70">
+          <div className="h-[280px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie

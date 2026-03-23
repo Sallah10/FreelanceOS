@@ -21,6 +21,7 @@ import {
     AlertTriangle,
     //  ExternalLink,
 } from "lucide-react";
+import Link from "next/link";
 
 // ─── Zod Schema ───────────────────────────────────────────────────
 const invoiceItemSchema = z.object({
@@ -332,7 +333,12 @@ function InvoiceRow({
         <tr className="border-b border-border/50 hover:bg-muted/30 transition-colors group">
             {/* Number */}
             <td className="px-4 py-3">
-                <span className="text-sm font-mono font-semibold">{invoice.number}</span>
+                <Link
+                    href={`/invoices/${invoice.id}`}
+                    className="text-sm font-mono font-semibold hover:text-brand transition-colors"
+                >
+                    {invoice.number}
+                </Link>
             </td>
 
             {/* Client */}
@@ -432,10 +438,12 @@ export default function InvoicesPage() {
         return invoices.filter((inv) => {
             const matchesStatus = statusFilter === "all" || inv.status === statusFilter;
             const q = search.toLowerCase().trim();
+
+            const clientName = inv.client?.name ?? "";
             const matchesSearch =
                 !q ||
                 inv.number.toLowerCase().includes(q) ||
-                inv.client?.name.toLowerCase().includes(q);
+                clientName.toLowerCase().includes(q);
             return matchesStatus && matchesSearch;
         });
     }, [invoices, statusFilter, search]);
@@ -451,12 +459,43 @@ export default function InvoicesPage() {
         .filter((i) => i.status === "overdue")
         .reduce((s, i) => s + i.amount, 0);
 
+    // const copyPaymentLink = (link: string) => {
+    //     navigator.clipboard.writeText(link).then(() => {
+    //         toast.success("Payment link copied!", {
+    //             description: "Share this Raenest link with your client.",
+    //         });
+    //     });
+    // };
+
     const copyPaymentLink = (link: string) => {
-        navigator.clipboard.writeText(link).then(() => {
-            toast.success("Payment link copied!", {
-                description: "Share this Raenest link with your client.",
-            });
-        });
+        // FIXED: Added fallback for non-HTTPS contexts (localhost sometimes blocks clipboard)
+        const copyToClipboard = async () => {
+            try {
+                await navigator.clipboard.writeText(link);
+                toast.success("Payment link copied!", {
+                    description: "Share this Raenest link with your client.",
+                });
+            } catch (err) {
+                // Fallback for older browsers or non-HTTPS
+                console.warn("Clipboard API failed, falling back to textarea method", err);
+                const textarea = document.createElement("textarea");
+                textarea.value = link;
+                document.body.appendChild(textarea);
+                textarea.select();
+                const success = document.execCommand("copy");
+                document.body.removeChild(textarea);
+                if (success) {
+                    toast.success("Payment link copied!", {
+                        description: "Share this Raenest link with your client.",
+                    });
+                } else {
+                    toast.error("Failed to copy", {
+                        description: "Please manually copy the link.",
+                    });
+                }
+            }
+        };
+        copyToClipboard();
     };
 
     const handleCreate = async (

@@ -1,3 +1,4 @@
+
 "use client";
 
 /**
@@ -25,6 +26,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import type { User, ApiResponse } from "@/types";
 import { setSessionCookie, clearSessionCookie } from "@/lib/cookies";
+import { useDemoAuth } from "@/lib/hooks/use-demo-auth"
 
 const TOKEN_KEY = "fos_token";
 
@@ -77,6 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [token, setToken] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
+    const { isDemoMode, demoUser, endDemo } = useDemoAuth();
 
     const persistToken = useCallback((t: string) => {
         localStorage.setItem(TOKEN_KEY, t);
@@ -93,6 +96,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Restore session on page refresh
     useEffect(() => {
         const hydrate = async () => {
+
+            if (isDemoMode) {
+                setToken("demo_token");
+                setUser(demoUser);
+                setIsLoading(false);
+                return;
+            }
+
             const saved = localStorage.getItem(TOKEN_KEY);
             if (!saved) { setIsLoading(false); return; }
 
@@ -121,7 +132,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
         };
         hydrate();
-    }, [clearToken]);
+    }, [clearToken, isDemoMode, demoUser]);
 
     const login = useCallback(
         async (creds: LoginCredentials): Promise<{ success: boolean; error?: string }> => {
@@ -187,10 +198,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
 
     const logout = useCallback(() => {
-        clearToken();
+        if (isDemoMode) {
+            endDemo();
+        } else {
+            clearToken();
+        }
         setUser(null);
         router.push("/login");
-    }, [clearToken, router]);
+
+    }, [clearToken, router, isDemoMode, endDemo]);
 
     const value = useMemo<AuthContextValue>(
         () => ({

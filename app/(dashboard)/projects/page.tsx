@@ -241,9 +241,9 @@ function ProjectCard({
             {/* Status dropdown */}
             {showStatusMenu && (
               <>
-                <div className="fixed inset-0 z-10" onClick={() => setShowStatusMenu(false)} />
+                <div className="fixed inset-0 z-40" onClick={() => setShowStatusMenu(false)} style={{ background: "transparent" }} />
                 <div
-                  className="absolute left-0 top-7 z-20 w-36 rounded-xl py-1 shadow-xl"
+                  className="absolute left-0 top-7 z-50 w-36 rounded-xl py-1 shadow-xl"
                   style={{ background: "var(--card)", border: "1px solid var(--border)" }}
                 >
                   {STATUS_COLUMNS.map((col) => (
@@ -356,7 +356,11 @@ export default function ProjectsPage() {
   };
 
   // Stats
-  const totalBudget = projects.reduce((s, p) => s + p.budget, 0);
+  // const totalBudget = projects.reduce((s, p) => s + p.budget, 0);
+  const totalBudget = projects.reduce((s, p) => {
+    const budget = typeof p.budget === 'number' && !isNaN(p.budget) ? p.budget : 0;
+    return s + budget;
+  }, 0);
   const activeCount = projects.filter((p) => p.status === "active").length;
   const completedCount = projects.filter((p) => p.status === "completed").length;
 

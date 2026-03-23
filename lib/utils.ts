@@ -55,11 +55,25 @@ export function formatRelativeTime(date: string | Date): string {
 
   const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 
-  if (Math.abs(diffDays) < 1) return "today";
-  if (Math.abs(diffDays) < 7) return rtf.format(diffDays, "day");
-  if (Math.abs(diffDays) < 30)
-    return rtf.format(Math.round(diffDays / 7), "week");
-  return rtf.format(Math.round(diffDays / 30), "month");
+  // Today check — use absolute diff less than 1 day
+  if (Math.abs(diffDays) === 0) return "today";
+
+  // Past dates (negative diffDays)
+  if (diffDays < 0) {
+    const absDays = Math.abs(diffDays);
+    if (absDays < 7) return rtf.format(diffDays, "day"); // "3 days ago"
+    if (absDays < 30) return rtf.format(Math.floor(diffDays / 7), "week"); // "2 weeks ago"
+    return rtf.format(Math.floor(diffDays / 30), "month"); // "1 month ago"
+  }
+
+  // Future dates (positive diffDays)
+  if (diffDays > 0) {
+    if (diffDays < 7) return rtf.format(diffDays, "day"); // "in 3 days"
+    if (diffDays < 30) return rtf.format(Math.floor(diffDays / 7), "week"); // "in 2 weeks"
+    return rtf.format(Math.floor(diffDays / 30), "month"); // "in 1 month"
+  }
+
+  return "today";
 }
 
 /**

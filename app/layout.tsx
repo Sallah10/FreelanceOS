@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     template: "%s | FreelanceOS",
   },
   description:
-    "Manage clients, track projects, generate invoices, and receive international payments via Raenest — all in one place.",
+    "Manage clients, track projects, generate invoices, and receive international payments via Raenest - all in one place.",
   keywords: ["freelance", "invoice", "Raenest", "payments", "Africa", "Nigeria"],
   authors: [{ name: "FreelanceOS" }],
   openGraph: {
@@ -35,6 +35,14 @@ export const metadata: Metadata = {
     description: "Manage clients, projects, and get paid internationally via Raenest.",
     siteName: "FreelanceOS",
   },
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    apple: "/apple-icon.png",
+  },
+
 };
 
 export const viewport: Viewport = {
