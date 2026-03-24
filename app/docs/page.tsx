@@ -395,8 +395,8 @@ function Section({ title, children }: { title: string; children: React.ReactNode
     );
 }
 
-
-function CodeBlock({ children, language = "bash" }: { children: React.ReactNode; language?: string }) {
+// { children, language = "bash" }
+function CodeBlock({ children }: { children: React.ReactNode; language?: string }) {
     return (
         <pre className="bg-black/30 rounded-xl p-4 overflow-x-auto text-sm font-mono text-green-400 border border-white/10">
             {children}
