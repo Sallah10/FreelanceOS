@@ -1,11 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import {
-    usePathname,
-    //  useRouter 
-} from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/context/auth-context";
 import { getInitials, cn } from "@/lib/utils";
 import {
@@ -20,8 +17,8 @@ import {
     Menu,
     X,
     FileCheck,
-    AlertTriangle,
 } from "lucide-react";
+import { LogoutModal } from "./logout-modal";
 
 const NAV_ITEMS = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -33,65 +30,29 @@ const NAV_ITEMS = [
     { label: "Settings", href: "/settings", icon: Settings },
 ];
 
-// ─── Logout Confirmation Modal ────────────────────────────────────
-function LogoutConfirmModal({
-    onConfirm,
-    onCancel,
-}: {
-    onConfirm: () => void;
-    onCancel: () => void;
-}) {
-    return (
-        <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            style={{ background: "oklch(0 0 0 / 0.6)", backdropFilter: "blur(4px)" }}
-            onClick={onCancel}
-        >
-            <div
-                className="w-full max-w-sm rounded-2xl p-6"
-                style={{ background: "var(--card)", border: "1px solid var(--border)" }}
-                onClick={(e) => e.stopPropagation()}
-            >
-                <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center">
-                        <AlertTriangle className="w-6 h-6 text-destructive" />
-                    </div>
-                    <div>
-                        <h3 className="text-lg font-semibold">Sign out?</h3>
-                        <p className="text-sm text-muted-foreground mt-1">
-                            You&apos;ll need to sign in again to access your dashboard.
-                        </p>
-                    </div>
-                    <div className="flex gap-3 w-full pt-2">
-                        <button
-                            onClick={onCancel}
-                            className="flex-1 py-2.5 rounded-xl text-sm font-medium border border-border hover:bg-muted transition-colors"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            onClick={onConfirm}
-                            className="flex-1 py-2.5 rounded-xl text-sm font-semibold bg-destructive text-white hover:bg-destructive/90 transition-colors"
-                        >
-                            Sign out
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-}
-
 // ─── Mobile Navigation Component ──────────────────────────────────
 export function MobileNav() {
     const [open, setOpen] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const pathname = usePathname();
-    //   const router = useRouter();
     const { user, logout } = useAuth();
 
     const displayName = user ? `${user.firstName} ${user.lastName}` : "Account";
     const initials = user ? getInitials(displayName) : "??";
+
+
+
+    // Prevent body scroll when drawer is open
+    useEffect(() => {
+        if (open) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
+        }
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [open]);
 
     const handleLogout = () => {
         setShowLogoutModal(false);
@@ -101,13 +62,12 @@ export function MobileNav() {
 
     return (
         <>
-            {/* Logout Modal */}
-            {showLogoutModal && (
-                <LogoutConfirmModal
-                    onConfirm={handleLogout}
-                    onCancel={() => setShowLogoutModal(false)}
-                />
-            )}
+            {/* Logout Modal - Rendered at root level via Portal */}
+            <LogoutModal
+                isOpen={showLogoutModal}
+                onClose={() => setShowLogoutModal(false)}
+                onConfirm={handleLogout}
+            />
 
             {/* Hamburger trigger */}
             <button
