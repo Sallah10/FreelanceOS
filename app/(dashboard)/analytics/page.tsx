@@ -143,7 +143,7 @@ export default function AnalyticsPage() {
 
 
 
-    // 5. Monthly trends (already in dashboard, but let's add more detail)
+    // 5. Monthly trends
     const monthlyTrends = useMemo(() => {
         const monthly: Record<string, { month: string; revenue: number; invoices: number }> = {};
 

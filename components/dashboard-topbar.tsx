@@ -15,8 +15,6 @@ export function DashboardTopbar() {
   const isMountedRef = useRef(false);
 
   useEffect(() => {
-    // Use a microtask to avoid synchronous setState warning
-    // This still triggers a re-render but in a way React accepts
     Promise.resolve().then(() => {
       if (!isMountedRef.current) {
         isMountedRef.current = true;

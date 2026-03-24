@@ -1,15 +1,5 @@
 "use client";
 
-/**
- * useDashboard — Dashboard data orchestration hook
- *
- * CHANGES FROM ORIGINAL:
- * 1. Single useEffect with Promise.all — avoids 3 separate loading flickers
- * 2. recentActivity typed as ActivityItem[] — no more `any[]`
- * 3. refresh() resets individual loading keys correctly
- * 4. Errors are typed, not `null as string | null`
- */
-
 import { useCallback, useEffect, useState } from "react";
 import { DashboardAPI } from "@/lib/api";
 import type { DashboardStats, EarningsDataPoint, ActivityItem } from "@/types";
@@ -56,13 +46,6 @@ export function useDashboard(): UseDashboardReturn {
     useState<DashboardLoadingState>(INITIAL_LOADING);
   const [errors, setErrors] = useState<DashboardErrorState>(INITIAL_ERRORS);
 
-  /**
-   * Core fetch function.
-   * Uses Promise.allSettled so a single API failure doesn't block the others.
-   * "allSettled" vs "all": Promise.all rejects if ANY promise rejects.
-   * Promise.allSettled waits for ALL and tells you which ones failed individually.
-   * This is important on bad networks — you want partial data shown.
-   */
   const fetchAll = useCallback(async () => {
     setIsLoading(INITIAL_LOADING);
     setErrors(INITIAL_ERRORS);
@@ -130,7 +113,7 @@ export function useDashboard(): UseDashboardReturn {
     init();
   }, [fetchAll]);
 
-  // Derived state — handy for disabling refresh button, showing global spinner
+  // Derived state - handy for disabling refresh button, showing global spinner
   const isAnyLoading = Object.values(isLoading).some(Boolean);
 
   return {

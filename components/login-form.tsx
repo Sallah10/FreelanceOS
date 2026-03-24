@@ -12,12 +12,7 @@ import { cn } from "@/lib/utils";
 import { Eye, EyeOff, Zap, ArrowRight, Loader2 } from "lucide-react";
 
 // ─── Validation schema ────────────────────────────────────────────
-/**
- * ADHD lesson — Zod on the frontend:
- * We validate BEFORE hitting the API. This catches typos instantly
- * without a network round-trip. The backend validates too (never trust
- * the client), but frontend validation = better UX.
- */
+
 const loginSchema = z.object({
     email: z
         .string()
@@ -37,7 +32,6 @@ export default function LoginForm() {
     const { login } = useAuth();
     const router = useRouter();
     const searchParams = useSearchParams();
-    // Where to redirect after login (set by middleware when redirecting from protected route)
     const from = searchParams.get("from") ?? "/dashboard";
 
     const {

@@ -71,11 +71,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange={false}
         >
-          {/*
-           * AuthProvider wraps everything so useAuth() works on any page.
-           * Order matters: ThemeProvider → AuthProvider → page content.
-           * Never put AuthProvider outside ThemeProvider — theme must exist first.
-           */}
+
           <AuthProvider>
             {children}
           </AuthProvider>

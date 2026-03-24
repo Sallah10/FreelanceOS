@@ -9,17 +9,6 @@ import { DashboardTopbar } from "@/components/dashboard-topbar";
 import { DemoBanner } from "@/components/demo-banner";
 
 
-/**
- * Dashboard Layout — wraps all routes under (dashboard)/
- *
- * Layout hierarchy:
- * RootLayout (html, body, theme)
- *   └── DashboardLayout (sidebar + topbar shell)
- *         └── page content (children)
- *
- * This is a Server Component — no "use client" needed here.
- * The sidebar and topbar are client components themselves (they handle state).
- */
 export default function DashboardLayout({
   children,
 }: {
@@ -28,7 +17,6 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const { isDemoMode } = useDemoAuth();
 
-  // Show demo toast only once when entering dashboard in demo mode
   useLayoutEffect(() => {
     if (isDemoMode && pathname === "/dashboard") {
       const hasSeenDemoToast = sessionStorage.getItem("demo_toast_shown");

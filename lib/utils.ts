@@ -7,8 +7,6 @@ import type {
   MilestoneStatus,
 } from "@/types";
 
-// The one and only cn() in this codebase.
-// If you need conditional classes anywhere, import from here.
 export function cn(...inputs: ClassValue[]): string {
   return twMerge(clsx(inputs));
 }
@@ -31,7 +29,7 @@ export function formatCurrency(
 
 /**
  * Format a date string for display.
- * Uses en-NG locale by default — shows dates the way Nigerians read them.
+ * Uses en-NG locale by default
  */
 export function formatDate(
   date: string | Date,
@@ -55,7 +53,7 @@ export function formatRelativeTime(date: string | Date): string {
 
   const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 
-  // Today check — use absolute diff less than 1 day
+  // Today check use absolute diff less than 1 day
   if (Math.abs(diffDays) === 0) return "today";
 
   // Past dates (negative diffDays)

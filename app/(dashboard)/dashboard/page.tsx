@@ -39,10 +39,7 @@ import {
   Legend,
 } from "recharts";
 
-// ============================================================
-// CHART COLORS — defined once, used consistently
-// These match our CSS token values for brand/chart colors
-// ============================================================
+
 const CHART_COLORS = {
   brand: "#2563EB",
   success: "#10B981",
@@ -57,7 +54,7 @@ const PIE_COLORS = [
   CHART_COLORS.muted,
 ];
 
-// Revenue distribution — static for now, can be derived from real data later
+// Revenue distribution — static for now
 const REVENUE_DISTRIBUTION = [
   { name: "Active", value: 45 },
   { name: "Completed", value: 30 },
@@ -294,8 +291,7 @@ export default function DashboardPage() {
                   dataKey="value"
                   strokeWidth={0}
                 >
-                  {/* BUG FIX: was using earningsData.map() — wrong array.
-                      Must use the SAME array as the `data` prop above. */}
+
                   {REVENUE_DISTRIBUTION.map((entry, index) => (
                     <Cell
                       key={`cell-${entry.name}`}
@@ -373,7 +369,6 @@ export default function DashboardPage() {
 
 // ============================================================
 // SUB-COMPONENTS
-// Small, focused — each does one thing well.
 // ============================================================
 
 function ActivityRow({ activity }: { activity: ActivityItem }) {
@@ -492,7 +487,7 @@ function ErrorState({ message }: { message: string }) {
   );
 }
 
-// Inline icon — avoids importing just for empty state
+// Inline icon 
 function BarIcon({ className }: { className?: string }) {
   return (
     <svg

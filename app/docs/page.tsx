@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { MarketingNav } from "@/components/marketing-nav";
 // import Link from "next/link";
 
@@ -54,16 +54,16 @@ export default function DocsPage() {
                             <p className="text-white/60 mb-2">All responses follow this structure:</p>
                             <CodeBlock language="json">
                                 {`{
-  "success": true,
-  "data": { ... }
-}`}
+                                "success": true,
+                                "data": { ... }
+                                }`}
                             </CodeBlock>
                             <p className="text-white/60 mt-2">Error responses:</p>
                             <CodeBlock language="json">
                                 {`{
-  "success": false,
-  "error": "Human-readable error message"
-}`}
+                                "success": false,
+                                "error": "Human-readable error message"
+                                }`}
                             </CodeBlock>
                         </Section>
 
@@ -74,18 +74,18 @@ export default function DocsPage() {
                                 path="/auth/register"
                                 description="Create a new user account"
                                 request={`{
-  "email": "user@example.com",
-  "password": "SecurePass123",
-  "firstName": "John",
-  "lastName": "Doe"
-}`}
+                                "email": "user@example.com",
+                                "password": "SecurePass123",
+                                "firstName": "John",
+                                "lastName": "Doe"
+                                }`}
                                 response={`{
-  "success": true,
-  "data": {
-    "token": "eyJhbGciOiJIUzI1NiIs...",
-    "user": { ... }
-  }
-}`}
+                                "success": true,
+                                "data": {
+                                    "token": "eyJhbGciOiJIUzI1NiIs...",
+                                    "user": { ... }
+                                }
+                                }`}
                             />
 
                             <Endpoint
@@ -93,16 +93,16 @@ export default function DocsPage() {
                                 path="/auth/login"
                                 description="Authenticate and receive JWT token"
                                 request={`{
-  "email": "user@example.com",
-  "password": "SecurePass123"
-}`}
+                                "email": "user@example.com",
+                                "password": "SecurePass123"
+                                }`}
                                 response={`{
-  "success": true,
-  "data": {
-    "token": "eyJhbGciOiJIUzI1NiIs...",
-    "user": { ... }
-  }
-}`}
+                                "success": true,
+                                "data": {
+                                    "token": "eyJhbGciOiJIUzI1NiIs...",
+                                    "user": { ... }
+                                }
+                                }`}
                             />
 
                             <Endpoint
@@ -111,16 +111,16 @@ export default function DocsPage() {
                                 description="Get current user profile"
                                 requiresAuth
                                 response={`{
-  "success": true,
-  "data": {
-    "id": "user_123",
-    "email": "user@example.com",
-    "firstName": "John",
-    "lastName": "Doe",
-    "currency": "USD",
-    "timezone": "Africa/Lagos"
-  }
-}`}
+                                "success": true,
+                                "data": {
+                                    "id": "user_123",
+                                    "email": "user@example.com",
+                                    "firstName": "John",
+                                    "lastName": "Doe",
+                                    "currency": "USD",
+                                    "timezone": "Africa/Lagos"
+                                }
+                                }`}
                             />
                         </Section>
 
@@ -131,12 +131,12 @@ export default function DocsPage() {
                                 description="List all clients for authenticated user"
                                 requiresAuth
                                 response={`{
-  "success": true,
-  "data": [...],
-  "total": 5,
-  "page": 1,
-  "pageSize": 10
-}`}
+                                "success": true,
+                                "data": [...],
+                                "total": 5,
+                                "page": 1,
+                                "pageSize": 10
+                                }`}
                             />
 
                             <Endpoint
@@ -145,12 +145,12 @@ export default function DocsPage() {
                                 description="Create a new client"
                                 requiresAuth
                                 request={`{
-  "name": "TechStart Nigeria",
-  "email": "hello@techstart.ng",
-  "company": "TechStart Nigeria Ltd",
-  "phone": "+234 802 345 6789",
-  "country": "NG"
-}`}
+                                "name": "TechStart Nigeria",
+                                "email": "hello@techstart.ng",
+                                "company": "TechStart Nigeria Ltd",
+                                "phone": "+234 802 345 6789",
+                                "country": "NG"
+                                }`}
                             />
 
                             <Endpoint
@@ -183,14 +183,14 @@ export default function DocsPage() {
                                 description="Create a new project"
                                 requiresAuth
                                 request={`{
-  "clientId": "client_123",
-  "name": "E-commerce Redesign",
-  "description": "Complete website overhaul",
-  "budget": 4500,
-  "currency": "USD",
-  "status": "planning",
-  "deadline": "2026-04-15T00:00:00Z"
-}`}
+                                "clientId": "client_123",
+                                "name": "E-commerce Redesign",
+                                "description": "Complete website overhaul",
+                                "budget": 4500,
+                                "currency": "USD",
+                                "status": "planning",
+                                "deadline": "2026-04-15T00:00:00Z"
+                                }`}
                             />
                         </Section>
 
@@ -208,16 +208,16 @@ export default function DocsPage() {
                                 description="Create a new invoice (auto-generates invoice number)"
                                 requiresAuth
                                 request={`{
-  "clientId": "client_123",
-  "amount": 2250,
-  "currency": "USD",
-  "dueDate": "2026-04-15T00:00:00Z",
-  "items": [
-    { "description": "UI Design", "quantity": 1, "rate": 1500 },
-    { "description": "Development", "quantity": 1, "rate": 750 }
-  ],
-  "notes": "Payment due within 15 days"
-}`}
+                                "clientId": "client_123",
+                                "amount": 2250,
+                                "currency": "USD",
+                                "dueDate": "2026-04-15T00:00:00Z",
+                                "items": [
+                                    { "description": "UI Design", "quantity": 1, "rate": 1500 },
+                                    { "description": "Development", "quantity": 1, "rate": 750 }
+                                ],
+                                "notes": "Payment due within 15 days"
+                                }`}
                             />
 
                             <Endpoint
@@ -240,11 +240,11 @@ export default function DocsPage() {
                                 description="Generate Raenest payment link (placeholder)"
                                 requiresAuth
                                 response={`{
-  "success": true,
-  "data": {
-    "link": "https://pay.raenest.com/fos-inv_123-abc123"
-  }
-}`}
+                                "success": true,
+                                "data": {
+                                    "link": "https://pay.raenest.com/fos-inv_123-abc123"
+                                }
+                                }`}
                             />
                         </Section>
 
@@ -255,19 +255,19 @@ export default function DocsPage() {
                                 description="Get key business metrics"
                                 requiresAuth
                                 response={`{
-  "success": true,
-  "data": {
-    "totalEarnings": 45250.75,
-    "monthlyEarnings": 8750.5,
-    "earningsGrowth": 23.5,
-    "activeProjects": 4,
-    "pendingInvoices": 3,
-    "pendingInvoicesAmount": 12500,
-    "overdueInvoices": 1,
-    "overdueInvoicesAmount": 6500,
-    "upcomingDeadlines": [...]
-  }
-}`}
+                                "success": true,
+                                "data": {
+                                    "totalEarnings": 45250.75,
+                                    "monthlyEarnings": 8750.5,
+                                    "earningsGrowth": 23.5,
+                                    "activeProjects": 4,
+                                    "pendingInvoices": 3,
+                                    "pendingInvoicesAmount": 12500,
+                                    "overdueInvoices": 1,
+                                    "overdueInvoicesAmount": 6500,
+                                    "upcomingDeadlines": [...]
+                                }
+                                }`}
                             />
 
                             <Endpoint

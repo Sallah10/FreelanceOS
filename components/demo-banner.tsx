@@ -12,7 +12,6 @@ export function DemoBanner() {
 
     useEffect(() => {
         if (isDemoMode && visible) {
-            // Show toast notification on mount
             setTimeout(() => {
                 const toastEvent = new CustomEvent("demo-toast");
                 window.dispatchEvent(toastEvent);

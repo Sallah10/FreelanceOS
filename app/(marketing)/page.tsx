@@ -109,7 +109,7 @@ function AnimatedCounter({ end, prefix = "", suffix = "", duration = 2000 }: {
   );
 }
 
-// ─── Mini Dashboard Preview (hero mockup) ─────────────────────────
+// ─── Mini Dashboard Preview  ─────────────────────────
 function DashboardPreview() {
   return (
     <div
@@ -327,43 +327,7 @@ export default function LandingPage() {
       style={{ background: "oklch(0.10 0.02 250)", color: "oklch(0.95 0.005 250)" }}
     >
       {/* ── Nav ── */}
-      {/* <nav
-        className="sticky top-0 z-50 flex items-center justify-between px-6 py-4 md:px-12"
-        style={{
-          background: "oklch(0.10 0.02 250 / 0.8)",
-          backdropFilter: "blur(12px)",
-          borderBottom: "1px solid oklch(1 0 0 / 6%)",
-        }}
-      >
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-[#2563EB] flex items-center justify-center">
-            <Zap className="w-4 h-4 text-white fill-current" />
-          </div>
-          <span className="font-bold text-sm tracking-tight">FreelanceOS</span>
-        </div>
-      
-        <div className="hidden md:flex items-center gap-8 text-sm text-white/50">
-          <a href="#features" className="hover:text-white transition-colors">Features</a>
-          <Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link>
-          <Link href="/about" className="hover:text-white transition-colors">About</Link>
-        </div>
 
-        <div className="flex items-center gap-3">
-          <Link
-            href="/login"
-            className="text-sm text-white/60 hover:text-white transition-colors hidden sm:block"
-          >
-            Sign in
-          </Link>
-          <Link
-            href="/register"
-            className="flex items-center gap-1.5 text-sm font-medium bg-[#2563EB] hover:bg-[#1d4fd8] text-white px-4 py-2 rounded-lg transition-colors"
-          >
-            Get started
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-      </nav> */}
       <MarketingNav />
 
       {/* ── Hero ── */}

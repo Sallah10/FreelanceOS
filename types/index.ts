@@ -1,12 +1,5 @@
-// ============================================================
-// FREELANCEOS — TYPE DEFINITIONS
-// Single source of truth. Never import types from api.ts.
-// If you need a type, add it here and export it.
-// ============================================================
-
 // --------------- Primitives ---------------
 
-/** ISO 8601 date string — always store dates as this */
 export type ISODateString = string;
 
 /** 3-letter currency code: "USD", "NGN", "GBP" */
@@ -68,7 +61,7 @@ export interface InvoiceItem {
   description: string;
   quantity: number;
   rate: number;
-  amount: number; // quantity × rate — computed, not stored
+  amount: number; // quantity × rate - computed, not stored
 }
 
 export interface Invoice {

@@ -57,10 +57,6 @@ apiClient.interceptors.response.use(
 
 // --------------- Toggle ---------------
 
-/**
- * Set to false once your friend deploys the backend.
- * Everything below respects this flag consistently.
- */
 const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK !== "false";
 
 // --------------- Utilities ---------------
@@ -636,7 +632,7 @@ export const InvoicesAPI = {
       return data;
     }
     await delay(500);
-    // Mock Raenest payment link — in production, this would call Raenest API
+    // Mock Raenest payment link - in production, this would call Raenest API
     const mockLink = `https://pay.raenest.com/fos-${invoiceId}-${Date.now()}`;
     return mockSuccess({ link: mockLink });
   },
@@ -678,8 +674,6 @@ export const MilestonesAPI = {
     return mockSuccess(filtered);
   },
 };
-
-// Add to lib/api.ts, after ProposalsAPI = { ... } but before export
 
 export const ProposalsAPI = {
   getProposals: async (): Promise<ApiResponse<Proposal[]>> => {
@@ -786,7 +780,7 @@ export const ProposalsAPI = {
       return data;
     }
     await delay(400);
-    // Mock update — in real implementation, you'd store this
+    // Mock update
     const updatedProposal: Proposal = {
       id,
       userId: "u_1",

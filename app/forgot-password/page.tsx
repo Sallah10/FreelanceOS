@@ -29,7 +29,7 @@ export default function ForgotPasswordPage() {
     });
 
     const onSubmit = async (values: ForgotFormValues) => {
-        // Mock API call — replace with actual when backend is ready
+        // Mock API call 
         await new Promise((resolve) => setTimeout(resolve, 800));
 
         setEmail(values.email);

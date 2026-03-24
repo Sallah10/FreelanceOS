@@ -80,7 +80,7 @@ export function MarketingNav() {
             </nav>
 
             {/* ========================================== */}
-            {/* 2. THE DRAWER (Rescued OUTSIDE the Nav!)   */}
+            {/* 2. THE DRAWER    */}
             {/* ========================================== */}
 
             {/* Backdrop Layer */}

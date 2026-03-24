@@ -1,17 +1,5 @@
 "use client";
 
-/**
- * error.tsx — Next.js App Router automatic error boundary
- *
- * HOW THIS WORKS:
- * If dashboard/page.tsx throws an UNCAUGHT error, Next.js renders this
- * component instead of crashing the whole page. The rest of the shell
- * (sidebar, topbar) remains visible — only the page content is replaced.
- *
- * This catches JavaScript errors, not API errors.
- * API errors are handled inside useDashboard() with the `errors` state.
- */
-
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, RefreshCw } from "lucide-react";
@@ -22,7 +10,7 @@ interface ErrorPageProps {
 }
 
 export default function DashboardError({ error, reset }: ErrorPageProps) {
-  // Log to your error tracking service (Sentry, LogRocket, etc.) here
+
   useEffect(() => {
     console.error("[Dashboard Error]", error);
   }, [error]);

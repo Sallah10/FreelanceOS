@@ -32,7 +32,7 @@ const createProjectSchema = z.object({
   deadline: z.string().optional(),
 });
 
-// Type definition - only once
+
 type CreateProjectFormValues = z.infer<typeof createProjectSchema>;
 
 // ─── Status config ────────────────────────────────────────────────

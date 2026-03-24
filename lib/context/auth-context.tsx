@@ -1,18 +1,6 @@
 
 "use client";
 
-/**
- * auth-context.tsx — Global auth state
- *
- * TOKEN DUAL-STORAGE PATTERN:
- * ┌─────────────────────────────────────────────────────────────┐
- * │  localStorage("fos_token")  →  axios API client reads this  │
- * │  cookie("fos_session")      →  Next.js middleware reads this │
- * └─────────────────────────────────────────────────────────────┘
- * Both are set on login, both cleared on logout.
- * localStorage is XSS-vulnerable. In production, move to httpOnly cookies.
- */
-
 import {
     createContext,
     useCallback,

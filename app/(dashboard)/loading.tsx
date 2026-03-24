@@ -1,15 +1,4 @@
-/**
- * loading.tsx — Next.js App Router automatic loading state
- *
- * HOW THIS WORKS (important concept):
- * Next.js automatically shows this component while dashboard/page.tsx is
- * loading its server-side data. For client components with useEffect,
- * this shows during the initial server render phase.
- *
- * This is DIFFERENT from the skeleton inside useDashboard().
- * This one is for route transitions (navigating TO the dashboard page).
- * The hook skeletons are for data fetching WITHIN the page.
- */
+
 
 export default function DashboardLoading() {
   return (

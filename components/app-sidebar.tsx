@@ -71,7 +71,7 @@ export function AppSidebar() {
           "relative flex flex-col h-full border-r border-sidebar-border bg-sidebar",
           "transition-all duration-300 ease-in-out",
           sidebarWidth,
-          // On mobile: hide sidebar entirely (handle with sheet/drawer later)
+
           "hidden md:flex",
         )}
       >
@@ -82,12 +82,12 @@ export function AppSidebar() {
             collapsed ? "justify-center" : "gap-2",
           )}
         >
-          {/* Logo icon — electric bolt on brand blue */}
+          {/* Logo icon */}
           <div className="shrink-0 flex items-center justify-center w-7 h-7 rounded-lg bg-brand">
             <Zap className="w-4 h-4 text-brand-foreground fill-current" />
           </div>
 
-          {/* Wordmark — hidden when collapsed */}
+          {/* Wordmark */}
           {!collapsed && (
             <span className="font-bold text-sm tracking-tight text-sidebar-foreground">
               FreelanceOS
@@ -253,7 +253,7 @@ function NavLink({ item, isActive, collapsed }: NavLinkProps) {
     </Link>
   );
 
-  // When collapsed, wrap in tooltip to show label on hover
+
   if (collapsed) {
     return (
       <Tooltip>
