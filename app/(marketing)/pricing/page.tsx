@@ -135,11 +135,11 @@ export default function PricingPage() {
                     {/* Raenest Fees Note */}
                     <div className="text-center mt-12 pt-8 border-t border-white/10">
                         <div className="flex items-center justify-center gap-2 text-sm text-white/40">
-                            <CreditCard className="w-4 h-4" />
+                            <CreditCard className="md:w-4 md:h-4 w-6 h-6" />
                             <span>Raenest transaction fees apply separately. Free plan includes everything you need to get started.</span>
                         </div>
                         <div className="flex items-center justify-center gap-2 text-sm text-white/40 mt-2">
-                            <Globe className="w-4 h-4" />
+                            <Globe className=" w-4 h-4" />
                             <span>Receive payments in USD, GBP, EUR, NGN, KES, GHS via Raenest</span>
                         </div>
                     </div>

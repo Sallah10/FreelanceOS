@@ -65,7 +65,7 @@ export default function AboutPage() {
                         <div>
                             <h2 className="text-2xl font-bold mb-4">The Story</h2>
                             <p className="text-white/60 leading-relaxed mb-4">
-                                In 2025, we saw a problem: African freelancers were winning international work but struggling with the backend — invoicing, payments, client management. Existing tools were built for US/EU markets and didn&apos;t fit.
+                                In 2026, we saw a problem: African freelancers were winning international work but struggling with the backend - invoicing, payments, client management. Existing tools were built for US/EU markets and didn&apos;t fit.
                             </p>
                             <p className="text-white/60 leading-relaxed mb-4">
                                 So we built FreelanceOS. A tool that combines client management, project tracking, and instant invoices with Raenest payment links. All in one place.
