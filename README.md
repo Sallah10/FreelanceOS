@@ -19,7 +19,6 @@
 
 <img width="1715" height="683" alt="Screenshot 2026-03-20 2312031" src="https://github.com/user-attachments/assets/bdbacab9-361c-41e5-8938-572efccec51d" />
 
-
 </div>
 
 ---
@@ -45,32 +44,32 @@ FreelanceOS is a full-stack freelancer management platform that combines:
 
 ## Features
 
-| Feature | Description |
-|---|---|
-| **Client Management** | Store contacts, track communication history, see total billed per client |
-| **Project Tracking** | Budgets, deadlines, milestone-based payments, status pipeline |
-| **Smart Invoicing** | Auto-numbered invoices, line items, PDF-ready, status tracking (draft → sent → paid → overdue) |
-| **Raenest Integration** | One-click international payment links on every invoice |
-| **Analytics Dashboard** | Earnings trends, revenue charts, client breakdown, upcoming deadlines |
-| **Proposal Builder** | Create, send, and track proposal acceptance rates |
-| **Activity Feed** | Real-time log of payments received, milestones hit, and new clients |
-| **Dark Mode** | Full dark/light mode - work comfortably at any hour |
-| **Mobile Responsive** | Full functionality on any screen size |
+| Feature                 | Description                                                                                    |
+| ----------------------- | ---------------------------------------------------------------------------------------------- |
+| **Client Management**   | Store contacts, track communication history, see total billed per client                       |
+| **Project Tracking**    | Budgets, deadlines, milestone-based payments, status pipeline                                  |
+| **Smart Invoicing**     | Auto-numbered invoices, line items, PDF-ready, status tracking (draft → sent → paid → overdue) |
+| **Raenest Integration** | One-click international payment links on every invoice                                         |
+| **Analytics Dashboard** | Earnings trends, revenue charts, client breakdown, upcoming deadlines                          |
+| **Proposal Builder**    | Create, send, and track proposal acceptance rates                                              |
+| **Activity Feed**       | Real-time log of payments received, milestones hit, and new clients                            |
+| **Dark Mode**           | Full dark/light mode - work comfortably at any hour                                            |
+| **Mobile Responsive**   | Full functionality on any screen size                                                          |
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| **Framework** | Next.js 16 (App Router) |
-| **Language** | TypeScript 5.0 (strict mode) |
-| **Styling** | Tailwind CSS 4.0, shadcn/ui |
-| **API Layer** | Axios with JWT interceptors, mock/real toggle via env variable |
-| **Auth** | JWT - Bearer token, stored in localStorage |
-| **Backend** | Node.js + Express + Prisma (see [backend repo](https://github.com/Sallah10/frealanceOs-Api)) |
-| **Database** | PostgreSQL via Neon |
-| **Deployment** | Vercel |
+| Layer          | Technology                                                                                   |
+| -------------- | -------------------------------------------------------------------------------------------- |
+| **Framework**  | Next.js 16 (App Router)                                                                      |
+| **Language**   | TypeScript 5.0 (strict mode)                                                                 |
+| **Styling**    | Tailwind CSS 4.0, shadcn/ui                                                                  |
+| **API Layer**  | Axios with JWT interceptors, mock/real toggle via env variable                               |
+| **Auth**       | JWT - Bearer token, stored in localStorage                                                   |
+| **Backend**    | Node.js + Express + Prisma (see [backend repo](https://github.com/Sallah10/frealanceOs-Api)) |
+| **Database**   | PostgreSQL via Neon                                                                          |
+| **Deployment** | Vercel                                                                                       |
 
 ---
 
@@ -128,6 +127,7 @@ NEXT_PUBLIC_USE_MOCK=false
 ```
 
 Login with the demo account or click on the "View demo" button:
+
 ```
 Email:    demo@freelanceos.dev
 Password: Demo@12345
@@ -170,21 +170,21 @@ freelanceos/
 
 ## Environment Variables
 
-| Variable | Required | Default | Description |
-|---|---|---|---|
-| `NEXT_PUBLIC_API_URL` | ✅ Yes | `http://localhost:5000/api/v1` | Backend API base URL |
-| `NEXT_PUBLIC_USE_MOCK` | ❌ No | `true` | `"false"` to use real backend |
+| Variable               | Required | Default                        | Description                   |
+| ---------------------- | -------- | ------------------------------ | ----------------------------- |
+| `NEXT_PUBLIC_API_URL`  | ✅ Yes   | `http://localhost:5000/api/v1` | Backend API base URL          |
+| `NEXT_PUBLIC_USE_MOCK` | ❌ No    | `true`                         | `"false"` to use real backend |
 
 ---
 
 ## Available Scripts
 
-| Command | Description |
-|---|---|
-| `npm run dev` | Start development server |
-| `npm run build` | Build for production |
-| `npm start` | Start production server |
-| `npm run lint` | Run ESLint |
+| Command         | Description              |
+| --------------- | ------------------------ |
+| `npm run dev`   | Start development server |
+| `npm run build` | Build for production     |
+| `npm start`     | Start production server  |
+| `npm run lint`  | Run ESLint               |
 
 ---
 
