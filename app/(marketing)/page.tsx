@@ -18,6 +18,7 @@ import {
   DollarSign,
 } from "lucide-react";
 import { MarketingNav } from "@/components/marketing-nav";
+import { setSessionCookie } from "@/lib/cookies";
 
 // ─── Typewriter cycling words ─────────────────────────────────────
 const CYCLE_WORDS = ["invoices", "clients", "payments", "projects", "proposals"];
@@ -399,6 +400,8 @@ export default function LandingPage() {
                 localStorage.removeItem("fos_session");
                 // Start demo session
                 localStorage.setItem("fos_demo_session", "true");
+                // The proxy checks the fos_session cookie, so set it too
+                setSessionCookie("demo_token");
                 // full page load so the auth provider picks up the fresh state
                 // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- hard reload on purpose
                 window.location.href = `${window.location.origin}/dashboard`;

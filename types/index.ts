@@ -180,3 +180,34 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
   page: number;
   pageSize: number;
 }
+
+// --------------- Notifications ---------------
+
+export type NotificationType =
+  | "invoice_paid"
+  | "invoice_overdue"
+  | "deadline_approaching"
+  | "proposal_response";
+
+export interface NotificationItem {
+  id: string;
+  type: NotificationType;
+  title: string;
+  description: string;
+  href: string;
+  createdAt: ISODateString;
+  read: boolean;
+}
+
+export interface NotificationPrefs {
+  invoicePaid: boolean;
+  paymentLinkClicked: boolean;
+  deadlineApproaching: boolean;
+  proposalResponse: boolean;
+}
+
+export interface NotificationsPayload {
+  notifications: NotificationItem[];
+  unreadCount: number;
+  prefs: NotificationPrefs;
+}

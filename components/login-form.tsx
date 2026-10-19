@@ -8,9 +8,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/context/auth-context";
+import { setSessionCookie } from "@/lib/cookies";
 import { USE_MOCK } from "@/lib/config";
 import { cn } from "@/lib/utils";
-import { Eye, EyeOff, Zap, ArrowRight, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Zap, ArrowRight, Loader2, Play } from "lucide-react";
 
 // ─── Validation schema ────────────────────────────────────────────
 
@@ -59,6 +60,19 @@ export default function LoginForm() {
         }
     };
 
+    const startDemo = () => {
+        // Clear any existing auth, then start a demo session. The proxy checks
+        // the fos_session cookie, so we must set it here too - otherwise the
+        // dashboard redirects straight back to /login.
+        localStorage.removeItem("fos_token");
+        localStorage.removeItem("fos_session");
+        localStorage.setItem("fos_demo_session", "true");
+        setSessionCookie("demo_token");
+        // full page load so the auth provider picks up the fresh demo state
+        // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- hard reload on purpose
+        window.location.href = `${window.location.origin}/dashboard`;
+    };
+
     return (
         <div
             className="min-h-screen flex flex-col items-center justify-center px-4 py-12"
@@ -100,21 +114,39 @@ export default function LoginForm() {
                     </p>
                 </div>
 
-                {/* Demo credentials hint */}
-                {USE_MOCK && (
-                    <div
-                        className="mb-6 rounded-xl px-4 py-3 text-xs"
-                        style={{
-                            background: "oklch(0.18 0.04 264)",
-                            border: "1px solid oklch(0.30 0.08 264)",
-                            color: "#93C5FD",
-                        }}
-                    >
-                        <span className="font-semibold">Demo mode</span> - mock
-                        backend, so any email and password signs you in. Nothing
-                        is saved to a real account.
+                {/* Demo entry - works on both mock and live backends */}
+                <div
+                    className="mb-6 rounded-xl px-4 py-3 text-xs"
+                    style={{
+                        background: "oklch(0.18 0.04 264)",
+                        border: "1px solid oklch(0.30 0.08 264)",
+                        color: "#93C5FD",
+                    }}
+                >
+                    <div className="flex items-start justify-between gap-3">
+                        <div>
+                            <span className="font-semibold">Just looking around?</span>
+                            <p className="text-white/45 mt-0.5">
+                                Open a fully populated demo workspace - no sign-up,
+                                no real data.
+                            </p>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={startDemo}
+                            className="shrink-0 inline-flex items-center gap-1.5 rounded-lg px-3 py-2 font-semibold text-white transition-colors"
+                            style={{ background: "#2563EB" }}
+                        >
+                            <Play className="w-3.5 h-3.5 fill-current" />
+                            Demo
+                        </button>
                     </div>
-                )}
+                    {USE_MOCK && (
+                        <p className="text-white/35 mt-2 pt-2 border-t border-white/10">
+                            Mock backend active - any email and password also signs you in.
+                        </p>
+                    )}
+                </div>
 
                 {/* Card */}
                 <div

@@ -23,6 +23,9 @@ import type {
   ActivityItem,
   ProposalStatus,
   User,
+  NotificationItem,
+  NotificationPrefs,
+  NotificationsPayload,
 } from "@/types";
 import { toast } from "sonner";
 
@@ -862,6 +865,140 @@ export const AuthAPI = {
       "/auth/password",
       payload,
     );
+    return data;
+  },
+  updateNotificationPrefs: async (
+    payload: Partial<NotificationPrefs>,
+  ): Promise<ApiResponse<{ notificationPrefs: NotificationPrefs }>> => {
+    if (mockDataEnabled()) {
+      const current = getMockPrefs();
+      const next = { ...current, ...payload };
+      if (typeof window !== "undefined")
+        localStorage.setItem(MOCK_PREFS_KEY, JSON.stringify(next));
+      return mockSuccess({ notificationPrefs: next });
+    }
+    const { data } = await apiClient.put<
+      ApiResponse<{ notificationPrefs: NotificationPrefs }>
+    >("/auth/notifications", payload);
+    return data;
+  },
+  deleteAccount: async (payload: {
+    password: string;
+    confirm: "DELETE";
+  }): Promise<ApiResponse<{ message: string }>> => {
+    if (mockDataEnabled()) {
+      await delay(400);
+      return mockSuccess({ message: "Account deleted" });
+    }
+    const { data } = await apiClient.delete<ApiResponse<{ message: string }>>(
+      "/auth/account",
+      { data: payload },
+    );
+    return data;
+  },
+};
+
+// --------------- Notifications ---------------
+
+const MOCK_PREFS_KEY = "fos_notification_prefs";
+const DEFAULT_MOCK_PREFS: NotificationPrefs = {
+  invoicePaid: true,
+  paymentLinkClicked: true,
+  deadlineApproaching: true,
+  proposalResponse: true,
+};
+
+function getMockPrefs(): NotificationPrefs {
+  if (typeof window === "undefined") return DEFAULT_MOCK_PREFS;
+  const raw = localStorage.getItem(MOCK_PREFS_KEY);
+  if (!raw) return DEFAULT_MOCK_PREFS;
+  try {
+    return { ...DEFAULT_MOCK_PREFS, ...JSON.parse(raw) };
+  } catch {
+    return DEFAULT_MOCK_PREFS;
+  }
+}
+
+function buildMockNotifications(): NotificationsPayload {
+  const prefs = getMockPrefs();
+  const now = Date.now();
+  const day = 24 * 60 * 60 * 1000;
+  const items: NotificationItem[] = [];
+
+  if (prefs.invoicePaid) {
+    const paid = mockInvoices.find((inv) => inv.status === "paid");
+    if (paid) {
+      items.push({
+        id: `paid_${paid.id}`,
+        type: "invoice_paid",
+        title: `Invoice ${paid.number} paid`,
+        description: `${paid.client?.name ?? "A client"} paid ${paid.currency} ${paid.amount.toLocaleString()}.`,
+        href: `/invoices/${paid.id}`,
+        createdAt: paid.paidAt ?? paid.updatedAt,
+        read: false,
+      });
+    }
+  }
+
+  const overdue = mockInvoices.find((inv) => inv.status === "overdue");
+  if (overdue) {
+    items.push({
+      id: `overdue_${overdue.id}`,
+      type: "invoice_overdue",
+      title: `Invoice ${overdue.number} is overdue`,
+      description: `${overdue.client?.name ?? "A client"} - past due (${overdue.currency} ${overdue.amount.toLocaleString()}).`,
+      href: `/invoices/${overdue.id}`,
+      createdAt: new Date(now - 4 * day).toISOString(),
+      read: false,
+    });
+  }
+
+  if (prefs.deadlineApproaching) {
+    const project = mockProjects.find((p) => p.status === "active");
+    if (project) {
+      items.push({
+        id: `deadline_${project.id}`,
+        type: "deadline_approaching",
+        title: `"${project.name}" deadline approaching`,
+        description: "Due in 2 days.",
+        href: "/projects",
+        createdAt: new Date(now - 1 * day).toISOString(),
+        read: false,
+      });
+    }
+  }
+
+  if (prefs.proposalResponse) {
+    items.push({
+      id: "proposal_mock_accepted",
+      type: "proposal_response",
+      title: `Proposal "Mobile App Redesign" accepted`,
+      description: `${mockClients[1]?.name ?? "A client"} accepted your proposal.`,
+      href: "/proposals",
+      createdAt: new Date(now - 2 * day).toISOString(),
+      read: true,
+    });
+  }
+
+  items.sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  );
+
+  return {
+    notifications: items,
+    unreadCount: items.filter((i) => !i.read).length,
+    prefs,
+  };
+}
+
+export const NotificationsAPI = {
+  list: async (): Promise<ApiResponse<NotificationsPayload>> => {
+    if (mockDataEnabled()) {
+      await delay(300);
+      return mockSuccess(buildMockNotifications());
+    }
+    const { data } =
+      await apiClient.get<ApiResponse<NotificationsPayload>>("/notifications");
     return data;
   },
 };
