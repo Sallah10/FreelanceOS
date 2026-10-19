@@ -42,6 +42,7 @@ export function useInvoices(): UseInvoicesReturn {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch only writes state after await
     fetch();
   }, [fetch]);
 

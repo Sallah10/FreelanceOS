@@ -55,8 +55,8 @@ export default function AboutPage() {
                             <span style={{ color: "#2563EB" }}>African freelancers win globally</span>
                         </h1>
                         <p className="text-white/40 max-w-2xl mx-auto text-lg">
-                            FreelanceOS started as a hackathon project and became a movement.
-                            We&apos;re building the command center freelancers deserve.
+                            FreelanceOS started as a hackathon project and grew into a
+                            working product. This is the command center freelancers deserve.
                         </p>
                     </div>
 

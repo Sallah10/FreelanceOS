@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/context/auth-context";
+import { USE_MOCK } from "@/lib/config";
 import { cn } from "@/lib/utils";
 import { Eye, EyeOff, Zap, ArrowRight, Loader2 } from "lucide-react";
 
@@ -29,6 +30,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 // ─── Component ─────────────────────────────────────────────────────────
 export default function LoginForm() {
     const [showPassword, setShowPassword] = useState(false);
+    const [formError, setFormError] = useState<string | null>(null);
     const { login } = useAuth();
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -44,15 +46,16 @@ export default function LoginForm() {
     });
 
     const onSubmit = async (values: LoginFormValues) => {
+        setFormError(null);
         const result = await login(values);
 
         if (result.success) {
             toast.success("Welcome back!", { description: "Redirecting to your dashboard..." });
             router.push(from);
         } else {
-            toast.error("Login failed", {
-                description: result.error ?? "Check your credentials and try again.",
-            });
+            const message = result.error ?? "Check your credentials and try again.";
+            setFormError(message);
+            toast.error("Login failed", { description: message });
         }
     };
 
@@ -98,17 +101,20 @@ export default function LoginForm() {
                 </div>
 
                 {/* Demo credentials hint */}
-                <div
-                    className="mb-6 rounded-xl px-4 py-3 text-xs"
-                    style={{
-                        background: "oklch(0.18 0.04 264)",
-                        border: "1px solid oklch(0.30 0.08 264)",
-                        color: "#93C5FD",
-                    }}
-                >
-                    <span className="font-semibold">Demo mode</span> - any email + any
-                    password works
-                </div>
+                {USE_MOCK && (
+                    <div
+                        className="mb-6 rounded-xl px-4 py-3 text-xs"
+                        style={{
+                            background: "oklch(0.18 0.04 264)",
+                            border: "1px solid oklch(0.30 0.08 264)",
+                            color: "#93C5FD",
+                        }}
+                    >
+                        <span className="font-semibold">Demo mode</span> - mock
+                        backend, so any email and password signs you in. Nothing
+                        is saved to a real account.
+                    </div>
+                )}
 
                 {/* Card */}
                 <div
@@ -118,7 +124,12 @@ export default function LoginForm() {
                         border: "1px solid oklch(1 0 0 / 8%)",
                     }}
                 >
-                    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
+                    <form
+                        onSubmit={handleSubmit(onSubmit)}
+                        onChange={() => setFormError(null)}
+                        noValidate
+                        className="space-y-5"
+                    >
                         {/* Email */}
                         <div className="space-y-1.5">
                             <label
@@ -196,6 +207,19 @@ export default function LoginForm() {
                                 <p className="text-xs text-red-400 mt-1">{errors.password.message}</p>
                             )}
                         </div>
+
+                        {formError && (
+                            <div
+                                role="alert"
+                                className="flex items-start gap-2 rounded-xl px-3 py-2.5 text-xs text-red-300"
+                                style={{
+                                    background: "rgba(239,68,68,0.10)",
+                                    border: "1px solid rgba(239,68,68,0.35)",
+                                }}
+                            >
+                                {formError}
+                            </div>
+                        )}
 
                         {/* Submit */}
                         <button

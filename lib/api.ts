@@ -5,8 +5,8 @@
  * All types come from @/types - never define types here.
  *
  * SECURITY NOTE on JWT storage:
- * We use localStorage for the hackathon. In production, tokens should be
- * stored in httpOnly cookies set by the server, so JS (including injected
+ * We store the token in localStorage for now. Before handling real users it
+ * should move to httpOnly cookies set by the server, so JS (including injected
  * malicious scripts) cannot access them. localStorage is vulnerable to XSS.
  */
 
@@ -28,7 +28,7 @@ import { toast } from "sonner";
 
 // --------------- Axios Instance ---------------
 
-import { API_BASE_URL, USE_MOCK } from "@/lib/config";
+import { API_BASE_URL, mockDataEnabled } from "@/lib/config";
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: { "Content-Type": "application/json" },
@@ -58,7 +58,6 @@ apiClient.interceptors.response.use(
 
 // --------------- Toggle ---------------
 
-// USE_MOCK imported from config
 
 // --------------- Utilities ---------------
 
@@ -367,7 +366,7 @@ const mockActivity: ActivityItem[] = [
 
 export const DashboardAPI = {
   getStats: async (): Promise<ApiResponse<DashboardStats>> => {
-    if (!USE_MOCK) {
+    if (!mockDataEnabled()) {
       const { data } =
         await apiClient.get<ApiResponse<DashboardStats>>("/dashboard/stats");
       return data;
@@ -379,7 +378,7 @@ export const DashboardAPI = {
   getEarningsOverTime: async (
     period: "monthly" | "weekly" = "monthly",
   ): Promise<ApiResponse<EarningsDataPoint[]>> => {
-    if (!USE_MOCK) {
+    if (!mockDataEnabled()) {
       const { data } = await apiClient.get<ApiResponse<EarningsDataPoint[]>>(
         "/dashboard/earnings",
         { params: { period } },
@@ -391,7 +390,7 @@ export const DashboardAPI = {
   },
 
   getRecentActivity: async (): Promise<ApiResponse<ActivityItem[]>> => {
-    if (!USE_MOCK) {
+    if (!mockDataEnabled()) {
       const { data } = await apiClient.get<ApiResponse<ActivityItem[]>>(
         "/dashboard/activity",
       );
@@ -404,7 +403,7 @@ export const DashboardAPI = {
 
 export const ClientsAPI = {
   getClients: async (): Promise<ApiResponse<Client[]>> => {
-    if (!USE_MOCK) {
+    if (!mockDataEnabled()) {
       const { data } = await apiClient.get<ApiResponse<Client[]>>("/clients");
       return data;
     }
@@ -413,7 +412,7 @@ export const ClientsAPI = {
   },
 
   getClient: async (id: string): Promise<ApiResponse<Client>> => {
-    if (!USE_MOCK) {
+    if (!mockDataEnabled()) {
       const { data } = await apiClient.get<ApiResponse<Client>>(
         `/clients/${id}`,
       );
@@ -428,7 +427,7 @@ export const ClientsAPI = {
   createClient: async (
     payload: Omit<Client, "id" | "userId" | "createdAt">,
   ): Promise<ApiResponse<Client>> => {
-    if (!USE_MOCK) {
+    if (!mockDataEnabled()) {
       const { data } = await apiClient.post<ApiResponse<Client>>(
         "/clients",
         payload,
@@ -451,7 +450,7 @@ export const ClientsAPI = {
     id: string,
     payload: Partial<Client>,
   ): Promise<ApiResponse<Client>> => {
-    if (!USE_MOCK) {
+    if (!mockDataEnabled()) {
       const { data } = await apiClient.put<ApiResponse<Client>>(
         `/clients/${id}`,
         payload,
@@ -466,7 +465,7 @@ export const ClientsAPI = {
   },
 
   deleteClient: async (id: string): Promise<ApiResponse<null>> => {
-    if (!USE_MOCK) {
+    if (!mockDataEnabled()) {
       const { data } = await apiClient.delete<ApiResponse<null>>(
         `/clients/${id}`,
       );
@@ -481,7 +480,7 @@ export const ClientsAPI = {
 
 export const ProjectsAPI = {
   getProjects: async (): Promise<ApiResponse<Project[]>> => {
-    if (!USE_MOCK) {
+    if (!mockDataEnabled()) {
       const { data } = await apiClient.get<ApiResponse<Project[]>>("/projects");
       return data;
     }
@@ -492,7 +491,7 @@ export const ProjectsAPI = {
   createProject: async (
     payload: Omit<Project, "id" | "userId" | "createdAt" | "updatedAt">,
   ): Promise<ApiResponse<Project>> => {
-    if (!USE_MOCK) {
+    if (!mockDataEnabled()) {
       const { data } = await apiClient.post<ApiResponse<Project>>(
         "/projects",
         payload,
@@ -517,7 +516,7 @@ export const ProjectsAPI = {
     id: string,
     payload: Partial<Project>,
   ): Promise<ApiResponse<Project>> => {
-    if (!USE_MOCK) {
+    if (!mockDataEnabled()) {
       const { data } = await apiClient.put<ApiResponse<Project>>(
         `/projects/${id}`,
         payload,
@@ -536,7 +535,7 @@ export const ProjectsAPI = {
   },
 
   deleteProject: async (id: string): Promise<ApiResponse<null>> => {
-    if (!USE_MOCK) {
+    if (!mockDataEnabled()) {
       const { data } = await apiClient.delete<ApiResponse<null>>(
         `/projects/${id}`,
       );
@@ -551,7 +550,7 @@ export const ProjectsAPI = {
 
 export const InvoicesAPI = {
   getInvoice: async (id: string): Promise<ApiResponse<Invoice>> => {
-    if (!USE_MOCK) {
+    if (!mockDataEnabled()) {
       const { data } = await apiClient.get<ApiResponse<Invoice>>(
         `/invoices/${id}`,
       );
@@ -564,7 +563,7 @@ export const InvoicesAPI = {
   },
 
   getInvoices: async (): Promise<ApiResponse<Invoice[]>> => {
-    if (!USE_MOCK) {
+    if (!mockDataEnabled()) {
       const { data } = await apiClient.get<ApiResponse<Invoice[]>>("/invoices");
       return data;
     }
@@ -575,7 +574,7 @@ export const InvoicesAPI = {
   createInvoice: async (
     payload: Omit<Invoice, "id" | "userId" | "createdAt" | "updatedAt">,
   ): Promise<ApiResponse<Invoice>> => {
-    if (!USE_MOCK) {
+    if (!mockDataEnabled()) {
       const { data } = await apiClient.post<ApiResponse<Invoice>>(
         "/invoices",
         payload,
@@ -602,7 +601,7 @@ export const InvoicesAPI = {
     id: string,
     payload: Partial<Invoice>,
   ): Promise<ApiResponse<Invoice>> => {
-    if (!USE_MOCK) {
+    if (!mockDataEnabled()) {
       const { data } = await apiClient.put<ApiResponse<Invoice>>(
         `/invoices/${id}`,
         payload,
@@ -621,7 +620,7 @@ export const InvoicesAPI = {
   },
 
   deleteInvoice: async (id: string): Promise<ApiResponse<null>> => {
-    if (!USE_MOCK) {
+    if (!mockDataEnabled()) {
       const { data } = await apiClient.delete<ApiResponse<null>>(
         `/invoices/${id}`,
       );
@@ -638,7 +637,7 @@ export const InvoicesAPI = {
     amount: number,
     currency: string,
   ): Promise<ApiResponse<{ link: string; paymentLink?: string }>> => {
-    if (!USE_MOCK) {
+    if (!mockDataEnabled()) {
       const { data } = await apiClient.post<
         ApiResponse<{ link?: string; paymentLink?: string }>
       >(`/invoices/${invoiceId}/payment-link`, { amount, currency });
@@ -662,7 +661,7 @@ export const InvoicesAPI = {
     invoiceId: string,
     email: string,
   ): Promise<ApiResponse<null>> => {
-    if (!USE_MOCK) {
+    if (!mockDataEnabled()) {
       const { data } = await apiClient.post<ApiResponse<null>>(
         `/invoices/${invoiceId}/send`,
         { email },
@@ -679,7 +678,7 @@ export const MilestonesAPI = {
   getMilestones: async (
     projectId?: string,
   ): Promise<ApiResponse<Milestone[]>> => {
-    if (!USE_MOCK) {
+    if (!mockDataEnabled()) {
       const { data } = await apiClient.get<ApiResponse<Milestone[]>>(
         "/milestones",
         {
@@ -698,7 +697,7 @@ export const MilestonesAPI = {
 
 export const ProposalsAPI = {
   getProposals: async (): Promise<ApiResponse<Proposal[]>> => {
-    if (!USE_MOCK) {
+    if (!mockDataEnabled()) {
       const { data } =
         await apiClient.get<ApiResponse<Proposal[]>>("/proposals");
       return data;
@@ -740,7 +739,7 @@ export const ProposalsAPI = {
   },
 
   getProposal: async (id: string): Promise<ApiResponse<Proposal>> => {
-    if (!USE_MOCK) {
+    if (!mockDataEnabled()) {
       const { data } = await apiClient.get<ApiResponse<Proposal>>(
         `/proposals/${id}`,
       );
@@ -771,7 +770,7 @@ export const ProposalsAPI = {
   createProposal: async (
     payload: Omit<Proposal, "id" | "userId" | "createdAt" | "updatedAt">,
   ): Promise<ApiResponse<Proposal>> => {
-    if (!USE_MOCK) {
+    if (!mockDataEnabled()) {
       const { data } = await apiClient.post<ApiResponse<Proposal>>(
         "/proposals",
         payload,
@@ -793,7 +792,7 @@ export const ProposalsAPI = {
     id: string,
     payload: Partial<Proposal>,
   ): Promise<ApiResponse<Proposal>> => {
-    if (!USE_MOCK) {
+    if (!mockDataEnabled()) {
       const { data } = await apiClient.put<ApiResponse<Proposal>>(
         `/proposals/${id}`,
         payload,
@@ -819,7 +818,7 @@ export const ProposalsAPI = {
   },
 
   deleteProposal: async (id: string): Promise<ApiResponse<null>> => {
-    if (!USE_MOCK) {
+    if (!mockDataEnabled()) {
       const { data } = await apiClient.delete<ApiResponse<null>>(
         `/proposals/${id}`,
       );
@@ -832,7 +831,7 @@ export const ProposalsAPI = {
 
 export const AuthAPI = {
   updateProfile: async (payload: Partial<User>): Promise<ApiResponse<User>> => {
-    if (USE_MOCK) {
+    if (mockDataEnabled()) {
       const demoUserStr =
         typeof window !== "undefined" ? localStorage.getItem("fos_user") : null;
       const baseUser: User = demoUserStr ? JSON.parse(demoUserStr) : MOCK_USER;
@@ -855,7 +854,7 @@ export const AuthAPI = {
     currentPassword: string;
     newPassword: string;
   }): Promise<ApiResponse<{ message: string }>> => {
-    if (USE_MOCK) {
+    if (mockDataEnabled()) {
       await delay(400);
       return mockSuccess({ message: "Password updated" });
     }

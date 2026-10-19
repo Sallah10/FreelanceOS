@@ -40,7 +40,7 @@ export default function PricingPage() {
                             Built for African freelancers
                         </h1>
                         <p className="text-white/40 max-w-lg mx-auto">
-                            Start free during the hackathon. Only pay Raenest transaction fees when you get paid.
+                            Start free. Only pay Raenest transaction fees when you get paid.
                         </p>
                     </div>
 

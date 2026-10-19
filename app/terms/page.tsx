@@ -27,7 +27,7 @@ export default function TermsPage() {
                         </Section>
 
                         <Section title="2. Description of Service">
-                            <p>FreelanceOS is a command center for freelancers to manage clients, track projects, generate invoices, and receive payments via Raenest. The service is currently in hackathon demo mode.</p>
+                            <p>FreelanceOS is a command center for freelancers to manage clients, track projects, generate invoices, and receive payments via Raenest.</p>
                         </Section>
 
                         <Section title="3. User Accounts">
@@ -51,19 +51,19 @@ export default function TermsPage() {
                         </Section>
 
                         <Section title="5. Payment and Raenest Integration">
-                            <p>FreelanceOS is currently free during the hackathon. Raenest transaction fees apply separately and are governed by Raenest&apos;s terms. You must connect your Raenest account to receive payments.</p>
+                            <p>FreelanceOS is free to use. Raenest transaction fees apply separately and are governed by Raenest&apos;s terms. Payment links are generated per invoice.</p>
                         </Section>
 
                         <Section title="6. Intellectual Property">
-                            <p>The FreelanceOS name, logo, and code are owned by the hackathon contributors. You retain ownership of all data you input into the service.</p>
+                            <p>The FreelanceOS name and logo are owned by the project maintainers. You retain ownership of all data you input into the service.</p>
                         </Section>
 
                         <Section title="7. Termination">
-                            <p>We may suspend or terminate your access at any time for violations of these terms. You may delete your account at any time via Settings.</p>
+                            <p>We may suspend or terminate your access at any time for violations of these terms. You can ask us to delete your account at any time via the contact email below.</p>
                         </Section>
 
                         <Section title="8. Disclaimer of Warranties">
-                            <p>The service is provided &quot;as is&quot; without warranties of any kind. We do not guarantee uninterrupted or error-free operation. This is a hackathon project, not a production service.</p>
+                            <p>The service is provided &quot;as is&quot; without warranties of any kind. We do not guarantee uninterrupted or error-free operation.</p>
                         </Section>
 
                         <Section title="9. Limitation of Liability">
@@ -76,7 +76,7 @@ export default function TermsPage() {
                     </div>
 
                     <p className="text-xs text-white/30 pt-8 border-t border-white/10">
-                        FreelanceOS is built for the DevCareer x Raenest Hackathon. These terms apply to demo purposes only.
+                        FreelanceOS is an independent product. These terms apply to everyone who uses it.
                     </p>
                 </div>
             </div>

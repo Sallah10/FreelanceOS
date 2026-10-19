@@ -22,3 +22,11 @@ export function isMockMode(): boolean {
 }
 
 export const USE_MOCK = isMockMode();
+
+// demo mode (started from the landing page's "View demo") is for exploring
+// without an account, so it has to read mock data too - there is no token
+export function mockDataEnabled(): boolean {
+  if (isMockMode()) return true;
+  if (typeof window === "undefined") return false;
+  return localStorage.getItem("fos_demo_session") === "true";
+}

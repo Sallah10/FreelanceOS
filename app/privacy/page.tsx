@@ -45,17 +45,16 @@ export default function PrivacyPage() {
                         <Section title="3. Data Security">
                             <p>We implement industry-standard security measures including:</p>
                             <ul className="list-disc list-inside space-y-1 mt-2 text-white/60">
-                                <li>JWT authentication with secure token storage</li>
-                                <li>Row Level Security (RLS) on all database tables</li>
+                                <li>JWT authentication, bcrypt-hashed passwords</li>
                                 <li>Rate limiting and CORS protection</li>
-                                <li>All data encrypted in transit (TLS 1.3)</li>
+                                <li>All data encrypted in transit (TLS)</li>
                             </ul>
                         </Section>
 
                         <Section title="4. Sharing Your Information">
                             <p>We do not sell your personal data. We share information only:</p>
                             <ul className="list-disc list-inside space-y-1 mt-2 text-white/60">
-                                <li>With Raenest to process payments (you must connect your account)</li>
+                                <li>With Raenest when you generate a payment link on an invoice</li>
                                 <li>When required by law or to protect legal rights</li>
                                 <li>With your explicit consent</li>
                             </ul>
@@ -66,7 +65,7 @@ export default function PrivacyPage() {
                             <ul className="list-disc list-inside space-y-1 mt-2 text-white/60">
                                 <li>Access and export your data</li>
                                 <li>Correct inaccurate information</li>
-                                <li>Request deletion of your account</li>
+                                <li>Request deletion of your account by contacting us</li>
                                 <li>Opt out of marketing communications</li>
                             </ul>
                         </Section>
@@ -77,7 +76,7 @@ export default function PrivacyPage() {
                     </div>
 
                     <p className="text-xs text-white/30 pt-8 border-t border-white/10">
-                        FreelanceOS is built for the DevCareer x Raenest Hackathon. This privacy policy applies to demo purposes.
+                        FreelanceOS is an independent product for freelancers. This policy describes what this app stores and how to reach us.
                     </p>
                 </div>
             </div>

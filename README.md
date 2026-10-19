@@ -9,7 +9,6 @@
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Hackathon](https://img.shields.io/badge/DevCareer_×_Raenest-Hackathon_2026-orange?style=flat-square)](https://devcareer.io)
 
 <br />
 
@@ -37,7 +36,7 @@ African freelancers are winning international clients - but the infrastructure h
 FreelanceOS is a full-stack freelancer management platform that combines:
 
 - A **professional dashboard** for client, project, and invoice management
-- **Raenest-powered payment links** embedded directly in invoices - one click for clients to pay internationally
+- **Payment links on invoices** - generate a per-invoice link your client can open to pay (Raenest checkout integration is still a placeholder, see below)
 - **Analytics** that show earnings trends, overdue risk, and upcoming deadlines at a glance
 
 ---
@@ -48,11 +47,10 @@ FreelanceOS is a full-stack freelancer management platform that combines:
 | ----------------------- | ---------------------------------------------------------------------------------------------- |
 | **Client Management**   | Store contacts, track communication history, see total billed per client                       |
 | **Project Tracking**    | Budgets, deadlines, milestone-based payments, status pipeline                                  |
-| **Smart Invoicing**     | Auto-numbered invoices, line items, PDF-ready, status tracking (draft → sent → paid → overdue) |
-| **Raenest Integration** | One-click international payment links on every invoice                                         |
+| **Smart Invoicing**     | Auto-numbered invoices, line items, print-to-PDF, status tracking (draft → sent → paid → overdue) |
+| **Payment Links**       | Generate a Raenest-shaped link per invoice (placeholder URL until Raenest API keys exist) |
 | **Analytics Dashboard** | Earnings trends, revenue charts, client breakdown, upcoming deadlines                          |
 | **Proposal Builder**    | Create, send, and track proposal acceptance rates                                              |
-| **Activity Feed**       | Real-time log of payments received, milestones hit, and new clients                            |
 | **Dark Mode**           | Full dark/light mode - work comfortably at any hour                                            |
 | **Mobile Responsive**   | Full functionality on any screen size                                                          |
 
@@ -103,8 +101,8 @@ NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1
 # Production (your deployed backend):
 # NEXT_PUBLIC_API_URL=https://frealanceos-api.onrender.com/api/v1
 
-# Set to "false" to use the real backend, "true" for mock data
-NEXT_PUBLIC_USE_MOCK=true
+# false (default) = talk to the real backend, true = local mock data
+NEXT_PUBLIC_USE_MOCK=false
 ```
 
 ### 3. Run the development server
@@ -115,7 +113,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-> **Running with mock data?** Set `NEXT_PUBLIC_USE_MOCK=true` - the app works fully without a backend connection. This is the default.
+> **Running with mock data?** Set `NEXT_PUBLIC_USE_MOCK=true` - the app works fully without a backend connection. The default is `false`, which talks to your deployed API.
 
 ### 4. Connect to the real backend
 
@@ -170,10 +168,10 @@ freelanceos/
 
 ## Environment Variables
 
-| Variable               | Required | Default                        | Description                   |
-| ---------------------- | -------- | ------------------------------ | ----------------------------- |
-| `NEXT_PUBLIC_API_URL`  | ✅ Yes   | `http://localhost:5000/api/v1` | Backend API base URL          |
-| `NEXT_PUBLIC_USE_MOCK` | ❌ No    | `true`                         | `"false"` to use real backend |
+| Variable               | Required | Default                                     | Description                                     |
+| ---------------------- | -------- | ------------------------------------------- | ----------------------------------------------- |
+| `NEXT_PUBLIC_API_URL`  | ❌ No    | `http://localhost:5000/api/v1` in dev, `https://frealanceos-api.onrender.com/api/v1` in prod | Backend API base URL (optional, has a fallback) |
+| `NEXT_PUBLIC_USE_MOCK` | ❌ No    | `false`                                     | `"true"` swaps the API layer for local mock data |
 
 ---
 
@@ -225,6 +223,6 @@ To deploy your own instance:
 
 <div align="center">
 
-Built with 🖤 for African freelancers · [DevCareer × Raenest Hackathon 2026](https://devcareer.io)
+Built with 🖤 for African freelancers
 
 </div>

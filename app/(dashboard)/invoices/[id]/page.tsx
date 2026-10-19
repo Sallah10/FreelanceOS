@@ -34,15 +34,19 @@ export default function InvoiceDetailPage() {
     const [showSendModal, setShowSendModal] = useState(false);
     const [email, setEmail] = useState("");
 
-    useEffect(() => {
+    // re-sync with the invoice list whenever it changes (initial load or a
+    // refresh elsewhere). Guarded so it only runs on an actual change.
+    const [syncedSource, setSyncedSource] = useState({ list: invoices, id: invoiceId });
+    if (syncedSource.list !== invoices || syncedSource.id !== invoiceId) {
+        setSyncedSource({ list: invoices, id: invoiceId });
         const found = invoices.find((inv) => inv.id === invoiceId);
         if (found) {
             setInvoice(found);
             setIsLoading(false);
-        } else if (!isLoading && invoices.length > 0) {
+        } else if (invoices.length > 0) {
             setIsLoading(false);
         }
-    }, [invoices, invoiceId, isLoading]);
+    }
 
     // Fetch specific invoice if not found in list
     useEffect(() => {

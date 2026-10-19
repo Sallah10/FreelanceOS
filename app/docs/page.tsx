@@ -242,7 +242,8 @@ export default function DocsPage() {
                                 response={`{
                                 "success": true,
                                 "data": {
-                                    "link": "https://pay.raenest.com/fos-inv_123-abc123"
+                                    "link": "https://pay.raenest.com/freelanceos/cmvd0abc000000000000inv1?amount=2250&currency=USD",
+                                    "paymentLink": "https://pay.raenest.com/freelanceos/cmvd0abc000000000000inv1?amount=2250&currency=USD"
                                 }
                                 }`}
                             />
@@ -303,6 +304,7 @@ export default function DocsPage() {
                         <Section title="Rate Limits">
                             <p className="text-white/60">
                                 All endpoints are rate-limited to <strong className="text-white">100 requests per 15 minutes</strong> per IP address.
+                                <code className="text-brand mx-1">/auth/login</code> and <code className="text-brand">/auth/register</code> get a tighter <strong className="text-white">10 requests per 15 minutes</strong> to slow credential stuffing.
                                 The response headers include:
                             </p>
                             <ul className="list-disc list-inside text-white/60 mt-2 space-y-1">
@@ -372,7 +374,7 @@ export default function DocsPage() {
                         {/* Footer */}
                         <div className="pt-8 border-t border-white/10">
                             <p className="text-xs text-white/30">
-                                Built for the DevCareer × Raenest Hackathon 2026. Need help? Open an issue on
+                                FreelanceOS API docs. Need help? Open an issue on
                                 <a href="https://github.com/Sallah10/FreelanceOS/issues">
                                     <span className="underline hover:text-brand ml-1">GitHub</span>
                                 </a>.

@@ -294,28 +294,29 @@ const FEATURES = [
   },
 ];
 
-// ─── Testimonials ─────────────────────────────────────────────────
-const TESTIMONIALS = [
+// ─── Use cases ────────────────────────────────────────────────────
+// real workflows the product actually supports, no invented quotes
+const USE_CASES = [
   {
-    quote: "Clean, fast, and easy to send invoices with payment links.",
-    name: "Alex O.",
-    role: "Developer, Remote",
-    initials: "AO",
-    color: "#3B82F6",
+    icon: FileText,
+    title: "Designers shipping work",
+    description:
+      "Send an invoice the same day a project is signed off, with a payment link your client can pay from any country.",
+    accent: "#3B82F6",
   },
   {
-    quote: "Keeps clients and projects organised without the fluff.",
-    name: "Nina R.",
-    role: "Designer, Remote",
-    initials: "NR",
-    color: "#10B981",
+    icon: Users,
+    title: "Developers on retainer",
+    description:
+      "Keep recurring clients, milestones, and monthly invoices in one workspace instead of a spreadsheet.",
+    accent: "#10B981",
   },
   {
-    quote: "Great starting point for running a small freelance practice.",
-    name: "Sam T.",
-    role: "Consultant, Remote",
-    initials: "ST",
-    color: "#F59E0B",
+    icon: BarChart3,
+    title: "Consultants billing by phase",
+    description:
+      "Write proposals, track what got accepted, and turn each phase into an invoice without leaving FreelanceOS.",
+    accent: "#F59E0B",
   },
 ];
 
@@ -362,7 +363,7 @@ export default function LandingPage() {
               }}
             >
               <Star className="w-3 h-3 fill-current" />
-              Built for the DevCareer × Raenest Hackathon
+              Invoices, clients & payments in one place
             </div>
           </div>
 
@@ -398,7 +399,9 @@ export default function LandingPage() {
                 localStorage.removeItem("fos_session");
                 // Start demo session
                 localStorage.setItem("fos_demo_session", "true");
-                window.location.href = "/dashboard";
+                // full page load so the auth provider picks up the fresh state
+                // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- hard reload on purpose
+                window.location.href = `${window.location.origin}/dashboard`;
               }}
               className="flex items-center gap-2 text-white/60 hover:text-white font-medium px-6 py-3 rounded-xl transition-colors"
               style={{ border: "1px solid oklch(1 0 0 / 10%)" }}
@@ -410,7 +413,7 @@ export default function LandingPage() {
 
           {/* Social proof micro-text */}
           <p className="text-center text-xs text-white/25 mt-6">
-            No credit card required · Free during hackathon · Raenest payments included
+            No credit card required · Free to start · Raenest payments included
           </p>
 
           {/* Hero mockup */}
@@ -439,10 +442,10 @@ export default function LandingPage() {
       >
         <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-px">
           {[
-            { label: "Invoices Created", end: 0, suffix: "" },
-            { label: "Active Clients", end: 0, suffix: "" },
+            { label: "Starting Price", end: 0, prefix: "$", suffix: "" },
+            { label: "REST Endpoints", end: 40, suffix: "" },
+            { label: "Core Resources", end: 6, suffix: "" },
             { label: "Currencies Supported", end: 6, suffix: "" },
-            { label: "Live API Connected", end: 1, suffix: "" },
           ].map((s: { label: string; end: number; suffix: string; prefix?: string }) => (
             <div
               key={s.label}
@@ -627,50 +630,39 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Testimonials ── */}
+      {/* ── Who it's for ── */}
       <section className="px-6 py-24 md:px-12">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <p className="text-xs font-semibold uppercase tracking-widest text-[#3B82F6] mb-3">
-              Freelancers love it
+              Who it&apos;s for
             </p>
             <h2 className="text-3xl font-bold tracking-tight">Built for people like you</h2>
           </div>
 
           <div className="grid gap-4 md:grid-cols-3">
-            {TESTIMONIALS.map((t) => (
-              <div
-                key={t.name}
-                className="rounded-2xl p-6 space-y-4"
-                style={{
-                  background: "oklch(0.14 0.025 250)",
-                  border: "1px solid oklch(1 0 0 / 6%)",
-                }}
-              >
-                <div className="flex gap-0.5">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
-                      key={i}
-                      className="w-3.5 h-3.5 fill-current"
-                      style={{ color: "#F59E0B" }}
-                    />
-                  ))}
-                </div>
-                <p className="text-sm text-white/60 leading-relaxed">&ldquo;{t.quote}&rdquo;</p>
-                <div className="flex items-center gap-3 pt-2" style={{ borderTop: "1px solid oklch(1 0 0 / 6%)" }}>
+            {USE_CASES.map((c) => {
+              const Icon = c.icon;
+              return (
+                <div
+                  key={c.title}
+                  className="rounded-2xl p-6 space-y-3"
+                  style={{
+                    background: "oklch(0.14 0.025 250)",
+                    border: "1px solid oklch(1 0 0 / 6%)",
+                  }}
+                >
                   <div
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white"
-                    style={{ background: t.color }}
+                    className="w-9 h-9 rounded-xl flex items-center justify-center"
+                    style={{ background: `${c.accent}1F`, color: c.accent }}
                   >
-                    {t.initials}
+                    <Icon className="w-4 h-4" />
                   </div>
-                  <div>
-                    <p className="text-xs font-semibold text-white">{t.name}</p>
-                    <p className="text-[10px] text-white/35">{t.role}</p>
-                  </div>
+                  <p className="text-sm font-semibold text-white">{c.title}</p>
+                  <p className="text-sm text-white/60 leading-relaxed">{c.description}</p>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -739,7 +731,7 @@ export default function LandingPage() {
           </div>
 
           <p className="text-xs text-white/25 text-center">
-            Built for the DevCareer × Raenest Hackathon 2026 · Payments powered by{" "}
+            FreelanceOS · Payments powered by{" "}
             <a
               href="https://raenest.com"
               target="_blank"

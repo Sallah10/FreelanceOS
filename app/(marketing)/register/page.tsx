@@ -71,6 +71,7 @@ function PasswordStrength({ password }: { password: string }) {
 // ─── Page ─────────────────────────────────────────────────────────
 export default function RegisterPage() {
     const [showPassword, setShowPassword] = useState(false);
+    const [formError, setFormError] = useState<string | null>(null);
     const { register: registerUser } = useAuth();
     const router = useRouter();
 
@@ -97,6 +98,7 @@ export default function RegisterPage() {
     });
 
     const onSubmit = async (values: RegisterFormValues) => {
+        setFormError(null);
         const result = await registerUser({
             firstName: values.firstName,
             lastName: values.lastName,
@@ -110,9 +112,9 @@ export default function RegisterPage() {
             });
             router.push("/dashboard");
         } else {
-            toast.error("Registration failed", {
-                description: result.error ?? "Please try again.",
-            });
+            const message = result.error ?? "Please try again.";
+            setFormError(message);
+            toast.error("Registration failed", { description: message });
         }
     };
 
@@ -174,7 +176,12 @@ export default function RegisterPage() {
                         border: "1px solid oklch(1 0 0 / 8%)",
                     }}
                 >
-                    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
+                    <form
+                        onSubmit={handleSubmit(onSubmit)}
+                        onChange={() => setFormError(null)}
+                        noValidate
+                        className="space-y-4"
+                    >
                         {/* Name row */}
                         <div className="grid grid-cols-2 gap-3">
                             <div className="space-y-1.5">
@@ -270,6 +277,19 @@ export default function RegisterPage() {
                                 <p className="text-xs text-red-400">{errors.confirmPassword.message}</p>
                             )}
                         </div>
+
+                        {formError && (
+                            <div
+                                role="alert"
+                                className="flex items-start gap-2 rounded-xl px-3 py-2.5 text-xs text-red-300"
+                                style={{
+                                    background: "rgba(239,68,68,0.10)",
+                                    border: "1px solid rgba(239,68,68,0.35)",
+                                }}
+                            >
+                                {formError}
+                            </div>
+                        )}
 
                         {/* Submit */}
                         <button

@@ -76,7 +76,7 @@ export default function RootLayout({
             {children}
           </AuthProvider>
           <Toaster
-            position="bottom-right"
+            position="top-center"
             richColors
             closeButton
             toastOptions={{ classNames: { toast: "font-sans" } }}
