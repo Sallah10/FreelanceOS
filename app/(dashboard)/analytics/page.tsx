@@ -29,7 +29,7 @@ import {
     Legend,
 } from "recharts";
 
-// Chart colors — consistent with dashboard
+// Chart colors - consistent with dashboard
 const CHART_COLORS = {
     brand: "#2563EB",
     success: "#10B981",

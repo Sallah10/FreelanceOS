@@ -106,7 +106,7 @@ export default function LoginForm() {
                         color: "#93C5FD",
                     }}
                 >
-                    <span className="font-semibold">Demo mode</span> — any email + any
+                    <span className="font-semibold">Demo mode</span> - any email + any
                     password works
                 </div>
 

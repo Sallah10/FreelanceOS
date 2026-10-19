@@ -290,12 +290,12 @@ export default function DocsPage() {
                         {/* Error Codes */}
                         <Section title="Error Codes">
                             <div className="space-y-2">
-                                <ErrorCode code="400" meaning="Bad Request — Validation error, missing required field" />
-                                <ErrorCode code="401" meaning="Unauthorized — Missing or invalid JWT token" />
-                                <ErrorCode code="403" meaning="Forbidden — Authenticated but no permission (trying to access another user's data)" />
-                                <ErrorCode code="404" meaning="Not Found — Resource doesn't exist" />
-                                <ErrorCode code="429" meaning="Too Many Requests — Rate limit exceeded" />
-                                <ErrorCode code="500" meaning="Internal Server Error — Something broke on our end" />
+                                <ErrorCode code="400" meaning="Bad Request - Validation error, missing required field" />
+                                <ErrorCode code="401" meaning="Unauthorized - Missing or invalid JWT token" />
+                                <ErrorCode code="403" meaning="Forbidden - Authenticated but no permission (trying to access another user's data)" />
+                                <ErrorCode code="404" meaning="Not Found - Resource doesn't exist" />
+                                <ErrorCode code="429" meaning="Too Many Requests - Rate limit exceeded" />
+                                <ErrorCode code="500" meaning="Internal Server Error - Something broke on our end" />
                             </div>
                         </Section>
 
@@ -306,9 +306,9 @@ export default function DocsPage() {
                                 The response headers include:
                             </p>
                             <ul className="list-disc list-inside text-white/60 mt-2 space-y-1">
-                                <li><code className="text-brand">X-RateLimit-Limit</code> — Maximum requests allowed</li>
-                                <li><code className="text-brand">X-RateLimit-Remaining</code> — Requests remaining in window</li>
-                                <li><code className="text-brand">X-RateLimit-Reset</code> — Time when window resets</li>
+                                <li><code className="text-brand">X-RateLimit-Limit</code> - Maximum requests allowed</li>
+                                <li><code className="text-brand">X-RateLimit-Remaining</code> - Requests remaining in window</li>
+                                <li><code className="text-brand">X-RateLimit-Reset</code> - Time when window resets</li>
                             </ul>
                         </Section>
 

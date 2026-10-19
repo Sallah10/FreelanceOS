@@ -54,7 +54,7 @@ const PIE_COLORS = [
   CHART_COLORS.muted,
 ];
 
-// Revenue distribution — static for now
+// Revenue distribution - static for now
 const REVENUE_DISTRIBUTION = [
   { name: "Active", value: 45 },
   { name: "Completed", value: 30 },
@@ -181,7 +181,7 @@ export default function DashboardPage() {
 
       {/* ---- Charts Row ---- */}
       <div className="grid gap-4 lg:grid-cols-7">
-        {/* Earnings Area Chart — 4/7 width */}
+        {/* Earnings Area Chart - 4/7 width */}
         <ChartCard
           title="Earnings Trend"
           description="Monthly revenue for the last 6 months"
@@ -270,7 +270,7 @@ export default function DashboardPage() {
           )}
         </ChartCard>
 
-        {/* Revenue Distribution Pie — 3/7 width */}
+        {/* Revenue Distribution Pie - 3/7 width */}
         <ChartCard
           title="Revenue Distribution"
           description="By project status"

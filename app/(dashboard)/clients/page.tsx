@@ -245,14 +245,14 @@ function ClientRow({
                         {client.country}
                     </div>
                 ) : (
-                    <span className="text-muted-foreground/30 text-sm">—</span>
+                    <span className="text-muted-foreground/30 text-sm">-</span>
                 )}
             </td>
 
             {/* Total billed */}
             <td className="px-4 py-3">
                 <span className="text-sm font-mono font-medium">
-                    {client.totalBilled ? formatCurrency(client.totalBilled) : "—"}
+                    {client.totalBilled ? formatCurrency(client.totalBilled) : "-"}
                 </span>
             </td>
 

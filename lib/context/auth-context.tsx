@@ -56,8 +56,8 @@ const MOCK_USER: AuthUser = {
 };
 const MOCK_TOKEN = "mock_jwt_fos_demo";
 
-/** Flip to false when backend is live. Keep in sync with lib/api.ts */
-const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK === "true";
+import { USE_MOCK } from "@/lib/config";
+// USE_MOCK imported from config
 
 const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 

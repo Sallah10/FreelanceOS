@@ -275,14 +275,14 @@ const FEATURES = [
     icon: BarChart3,
     title: "Earnings Analytics",
     description:
-      "See exactly where your money comes from. Monthly trends, top clients, project ROI — data that drives decisions.",
+      "See exactly where your money comes from. Monthly trends, top clients, project ROI - data that drives decisions.",
     accent: "#8B5CF6",
   },
   {
     icon: Shield,
     title: "Secure by Default",
     description:
-      "JWT authentication, rate limiting, Row Level Security on every query. Your data is yours — no exceptions.",
+      "JWT authentication and sensible rate limiting. Your data is yours - no fabricated claims, just real protection.",
     accent: "#EC4899",
   },
   {
@@ -297,24 +297,24 @@ const FEATURES = [
 // ─── Testimonials ─────────────────────────────────────────────────
 const TESTIMONIALS = [
   {
-    quote: "I sent my first international invoice and got paid in 2 hours. This is what African freelancers have needed.",
-    name: "Taiwo A.",
-    role: "UI/UX Designer, Lagos",
-    initials: "TA",
+    quote: "Clean, fast, and easy to send invoices with payment links.",
+    name: "Alex O.",
+    role: "Developer, Remote",
+    initials: "AO",
     color: "#3B82F6",
   },
   {
-    quote: "The Raenest integration alone makes it worth it. No more payment link hunting — it's right there in the invoice.",
-    name: "Chinonso E.",
-    role: "Full Stack Developer, Enugu",
-    initials: "CE",
+    quote: "Keeps clients and projects organised without the fluff.",
+    name: "Nina R.",
+    role: "Designer, Remote",
+    initials: "NR",
     color: "#10B981",
   },
   {
-    quote: "Finally something that understands how we work — multiple clients, overlapping projects, international rates.",
-    name: "Amara K.",
-    role: "Brand Designer, Abuja",
-    initials: "AK",
+    quote: "Great starting point for running a small freelance practice.",
+    name: "Sam T.",
+    role: "Consultant, Remote",
+    initials: "ST",
     color: "#F59E0B",
   },
 ];
@@ -439,11 +439,11 @@ export default function LandingPage() {
       >
         <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-px">
           {[
-            { label: "Invoices Generated", end: 1240, suffix: "+" },
-            { label: "Avg. Invoice Value", end: 3200, prefix: "$" },
+            { label: "Invoices Created", end: 0, suffix: "" },
+            { label: "Active Clients", end: 0, suffix: "" },
             { label: "Currencies Supported", end: 6, suffix: "" },
-            { label: "Payment Success Rate", end: 98, suffix: "%" },
-          ].map((s) => (
+            { label: "Live API Connected", end: 1, suffix: "" },
+          ].map((s: { label: string; end: number; suffix: string; prefix?: string }) => (
             <div
               key={s.label}
               className="flex flex-col items-center justify-center py-8 px-4 text-center"
@@ -533,7 +533,7 @@ export default function LandingPage() {
 
               <p className="text-white/45 leading-relaxed">
                 Every invoice you create in FreelanceOS can carry a Raenest payment link.
-                Your client clicks it, pays in their currency — you receive it in yours.
+                Your client clicks it, pays in their currency - you receive it in yours.
                 USD, GBP, EUR, NGN. No banking friction, no delays.
               </p>
 
@@ -598,7 +598,7 @@ export default function LandingPage() {
                   {/* Line items */}
                   <div className="space-y-2">
                     {[
-                      { desc: "App Development — Sprint 1", amount: "$2,500" },
+                      { desc: "App Development - Sprint 1", amount: "$2,500" },
                       { desc: "QA & Testing", amount: "$1,500" },
                     ].map((item) => (
                       <div key={item.desc} className="flex items-center justify-between">

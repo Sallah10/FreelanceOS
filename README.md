@@ -13,7 +13,7 @@
 
 <br />
 
-**[🚀 Live Demo](https://freelance-os-ten.vercel.app/) · [📡 API](https://frealanceos-api.onrender.com) · [📖 API Docs](https://freelance-os-ten.vercel.app/docs) · [⚙️ Backend Repo](https://github.com/Sallah10/frealanceOs-Api)****
+**[🚀 Live Demo](https://freelance-os-ten.vercel.app/) · [📡 API](https://frealanceos-api.onrender.com) · [📖 API Docs](https://freelance-os-ten.vercel.app/docs) · [⚙️ Backend Repo](https://github.com/Sallah10/frealanceOs-Api)\*\***
 
 <br />
 
@@ -25,7 +25,7 @@
 
 ## The Problem
 
-African freelancers are winning international clients — but the infrastructure hasn't caught up.
+African freelancers are winning international clients - but the infrastructure hasn't caught up.
 
 - **Payment friction** - Clients abroad struggle to pay in local-friendly ways
 - **No central hub** - Client info lives in WhatsApp, invoices in Google Docs, deadlines in Excel
@@ -209,9 +209,9 @@ To deploy your own instance:
 
 ## Related
 
-- **[Backend Repository](https://github.com/Sallah10/frealanceOs-Api)** — Node.js + Express + Prisma API
-- **[API Documentation](https://freelance-os-ten.vercel.app/docs)** — Full endpoint reference
-- **[Live Demo](https://freelance-os-ten.vercel.app/)** — Try it now
+- **[Backend Repository](https://github.com/Sallah10/frealanceOs-Api)** - Node.js + Express + Prisma API
+- **[API Documentation](https://freelance-os-ten.vercel.app/docs)** - Full endpoint reference
+- **[Live Demo](https://freelance-os-ten.vercel.app/)** - Try it now
 
 ---
 

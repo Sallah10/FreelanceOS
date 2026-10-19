@@ -9,7 +9,7 @@ import type { ThemeProviderProps } from "next-themes";
  * without making the root layout a client component.
  *
  * Why separate? Next.js App Router requires layout.tsx to be a Server Component.
- * Anything with "use client" cannot be a direct child of a Server Component's JSX —
+ * Anything with "use client" cannot be a direct child of a Server Component's JSX -
  * it needs to be imported as a separate module like this.
  */
 export function ThemeProvider({ children, ...props }: ThemeProviderProps) {

@@ -18,7 +18,6 @@ import {
     Link2,
     Loader2,
     AlertTriangle,
-    Download,
     ExternalLink,
     Printer,
 } from "lucide-react";
@@ -47,11 +46,28 @@ export default function InvoiceDetailPage() {
 
     // Fetch specific invoice if not found in list
     useEffect(() => {
-        if (!invoice && !isLoading && invoices.length > 0) {
-            toast.error("Invoice not found");
-            router.push("/invoices");
-        }
-    }, [invoice, isLoading, invoices, router]);
+        let ignore = false;
+        if (invoice || invoices.length > 0) return;
+        const fetchOne = async () => {
+            try {
+                const res = await InvoicesAPI.getInvoice(invoiceId);
+                if (!ignore && res.success && res.data) {
+                    setInvoice(res.data);
+                }
+            } catch {
+                if (!ignore) {
+                    toast.error("Invoice not found");
+                    router.push("/invoices");
+                }
+            } finally {
+                if (!ignore) setIsLoading(false);
+            }
+        };
+        fetchOne();
+        return () => {
+            ignore = true;
+        };
+    }, [invoice, invoices, invoiceId, router]);
 
     const handleCopyLink = async () => {
         if (!invoice?.paymentLink) {
@@ -208,7 +224,7 @@ export default function InvoiceDetailPage() {
                             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
                                 Bill To
                             </p>
-                            <p className="font-semibold">{invoice.client?.name || "—"}</p>
+                            <p className="font-semibold">{invoice.client?.name || "-"}</p>
                             {invoice.client?.email && (
                                 <p className="text-sm text-muted-foreground">{invoice.client.email}</p>
                             )}
@@ -365,15 +381,12 @@ export default function InvoiceDetailPage() {
                     </Button>
                 )}
                 <Button
-                    onClick={() => {
-                        const pdfUrl = `/api/invoices/${invoice.id}/pdf`;
-                        window.open(pdfUrl, "_blank");
-                    }}
+                    onClick={() => window.print()}
                     variant="outline"
                     className="gap-2"
                 >
-                    <Download className="w-4 h-4" />
-                    Download PDF
+                    <Printer className="w-4 h-4" />
+                    Print PDF
                 </Button>
             </div>
 

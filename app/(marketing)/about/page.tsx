@@ -7,8 +7,8 @@ import Link from "next/link";
 const values = [
     {
         icon: Users,
-        title: "Built for African Freelancers",
-        description: "We understand the unique challenges African freelancers face — from international payments to client trust. Every feature is designed with you in mind.",
+        title: "Built for Freelancers",
+        description: "Clear, simple tools for sending invoices, managing clients and keeping projects on track.",
     },
     {
         icon: Zap,
@@ -71,7 +71,7 @@ export default function AboutPage() {
                                 So we built FreelanceOS. A tool that combines client management, project tracking, and instant invoices with Raenest payment links. All in one place.
                             </p>
                             <p className="text-white/60 leading-relaxed">
-                                Now, thousands of freelancers across Nigeria, Kenya, Ghana, and beyond use FreelanceOS to get paid faster and manage their business better.
+                                Now, a small, honest tool to help freelancers send invoices, track clients and projects, and collect payments via Raenest links.
                             </p>
                         </div>
                         <div className="rounded-2xl p-8" style={{ background: "oklch(0.14 0.025 250)", border: "1px solid oklch(1 0 0 / 8%)" }}>

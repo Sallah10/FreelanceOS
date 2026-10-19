@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ============================================================
-   FREELANCEOS — DESIGN TOKENS
+   FREELANCEOS - DESIGN TOKENS
    Built to complement Raenest's 2025 rebrand:
    bold, confident, sharp contrasts, elevated fintech feel.
    ============================================================ */
@@ -131,7 +131,7 @@
 
 /* ============================================================
    LIGHT MODE
-   Clean, professional, high contrast — not washed out.
+   Clean, professional, high contrast - not washed out.
    ============================================================ */
 :root {
   --background: oklch(
@@ -164,7 +164,7 @@
   --input: oklch(0.89 0.01 250);
   --ring: oklch(0.51 0.22 264);
 
-  /* Charts — blue family for cohesion */
+  /* Charts - blue family for cohesion */
   --chart-1: oklch(0.51 0.22 264); /* brand blue */
   --chart-2: oklch(0.72 0.17 158); /* emerald */
   --chart-3: oklch(0.75 0.16 65); /* amber */
@@ -176,7 +176,7 @@
   --brand-foreground: oklch(0.98 0 0);
   --brand-muted: oklch(0.92 0.05 264);
 
-  /* Earn (amber) — used on earnings, money stats */
+  /* Earn (amber) - used on earnings, money stats */
   --earn: oklch(0.75 0.16 65);
   --earn-foreground: oklch(0.15 0.05 65);
 
@@ -188,7 +188,7 @@
 
   --radius: 0.75rem;
 
-  /* Sidebar — slightly darker than background */
+  /* Sidebar - slightly darker than background */
   --sidebar: oklch(0.99 0 0);
   --sidebar-foreground: oklch(0.12 0.02 250);
   --sidebar-primary: oklch(0.51 0.22 264);
@@ -201,7 +201,7 @@
 
 /* ============================================================
    DARK MODE
-   Deep navy shell — Raenest's bold, confident dark aesthetic.
+   Deep navy shell - Raenest's bold, confident dark aesthetic.
    Cards float on a near-black surface.
    ============================================================ */
 .dark {
@@ -254,7 +254,7 @@
   --warning: oklch(0.8 0.16 65);
   --warning-foreground: oklch(0.12 0 0);
 
-  /* Sidebar — slightly lighter than background */
+  /* Sidebar - slightly lighter than background */
   --sidebar: oklch(0.13 0.025 250);
   --sidebar-foreground: oklch(0.9 0.005 250);
   --sidebar-primary: oklch(0.6 0.22 264);
@@ -297,7 +297,7 @@
     height: 100%;
   }
 
-  /* Number inputs — no spinners */
+  /* Number inputs - no spinners */
   input[type="number"]::-webkit-outer-spin-button,
   input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -310,14 +310,14 @@
    Project-specific utilities that aren't in Tailwind core
    ============================================================ */
 @layer utilities {
-  /* Glass morphism — used on overlapping cards */
+  /* Glass morphism - used on overlapping cards */
   .glass {
     background: oklch(from var(--card) l c h / 0.85);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
   }
 
-  /* Gradient text — used for big earning numbers */
+  /* Gradient text - used for big earning numbers */
   .text-gradient-earn {
     background: linear-gradient(
       135deg,

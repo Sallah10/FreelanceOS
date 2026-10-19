@@ -343,7 +343,7 @@ function InvoiceRow({
 
             {/* Client */}
             <td className="px-4 py-3">
-                <span className="text-sm">{invoice.client?.name ?? "—"}</span>
+                <span className="text-sm">{invoice.client?.name ?? "-"}</span>
             </td>
 
             {/* Amount */}
@@ -383,7 +383,7 @@ function InvoiceRow({
                         Copy link
                     </button>
                 ) : (
-                    <span className="text-xs text-muted-foreground/40">—</span>
+                    <span className="text-xs text-muted-foreground/40">-</span>
                 )}
             </td>
 

@@ -1,8 +1,8 @@
 /**
- * lib/api.ts — FreelanceOS API Layer
+ * lib/api.ts - FreelanceOS API Layer
  *
  * Architecture decision: feature-flag controlled mock/real switching.
- * All types come from @/types — never define types here.
+ * All types come from @/types - never define types here.
  *
  * SECURITY NOTE on JWT storage:
  * We use localStorage for the hackathon. In production, tokens should be
@@ -22,15 +22,16 @@ import type {
   EarningsDataPoint,
   ActivityItem,
   ProposalStatus,
+  User,
 } from "@/types";
 import { toast } from "sonner";
 
 // --------------- Axios Instance ---------------
 
+import { API_BASE_URL, USE_MOCK } from "@/lib/config";
 const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1",
+  baseURL: API_BASE_URL,
   headers: { "Content-Type": "application/json" },
-  // Timeout prevents hanging requests on bad network (common in Nigeria)
   timeout: 15_000,
 });
 
@@ -43,12 +44,12 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-// Global error normalisation — never let axios errors bubble as raw AxiosError
+// Global error normalisation - never let axios errors bubble as raw AxiosError
 apiClient.interceptors.response.use(
   (res) => res,
   (error) => {
     if (error.response?.status === 401) {
-      // Token expired — clear it and let auth middleware handle redirect
+      // Token expired - clear it and let auth middleware handle redirect
       if (typeof window !== "undefined") localStorage.removeItem("fos_token");
     }
     return Promise.reject(error);
@@ -57,7 +58,7 @@ apiClient.interceptors.response.use(
 
 // --------------- Toggle ---------------
 
-const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK !== "false";
+// USE_MOCK imported from config
 
 // --------------- Utilities ---------------
 
@@ -185,7 +186,7 @@ const mockInvoices: Invoice[] = [
     paidAt: "2026-02-13T10:30:00Z",
     items: [
       {
-        description: "UI Design — Phase 1",
+        description: "UI Design - Phase 1",
         quantity: 1,
         rate: 1500,
         amount: 1500,
@@ -215,7 +216,7 @@ const mockInvoices: Invoice[] = [
     paymentLink: "https://pay.raenest.com/mock-link-xyz",
     items: [
       {
-        description: "App Development — Sprint 1",
+        description: "App Development - Sprint 1",
         quantity: 1,
         rate: 2500,
         amount: 2500,
@@ -239,7 +240,7 @@ const mockInvoices: Invoice[] = [
     dueDate: "2026-02-15T00:00:00Z",
     items: [
       {
-        description: "Brand Identity System — Full Delivery",
+        description: "Brand Identity System - Full Delivery",
         quantity: 1,
         rate: 6500,
         amount: 6500,
@@ -293,14 +294,14 @@ const mockDashboardStats: DashboardStats = {
     {
       id: "p_1",
       type: "project",
-      title: "E-commerce Redesign — Final Delivery",
+      title: "E-commerce Redesign - Final Delivery",
       date: "2026-04-15T00:00:00Z",
       clientName: "TechStart Nigeria",
     },
     {
       id: "inv_2",
       type: "invoice",
-      title: "INV-2026-002 — Mobile App MVP",
+      title: "INV-2026-002 - Mobile App MVP",
       date: "2026-03-25T00:00:00Z",
       amount: 4000,
       clientName: "DesignCo",
@@ -549,6 +550,19 @@ export const ProjectsAPI = {
 };
 
 export const InvoicesAPI = {
+  getInvoice: async (id: string): Promise<ApiResponse<Invoice>> => {
+    if (!USE_MOCK) {
+      const { data } = await apiClient.get<ApiResponse<Invoice>>(
+        `/invoices/${id}`,
+      );
+      return data;
+    }
+    await delay(400);
+    const invoice = mockInvoices.find((i) => i.id === id);
+    if (!invoice) return { success: false, error: "Invoice not found" };
+    return mockSuccess(invoice);
+  },
+
   getInvoices: async (): Promise<ApiResponse<Invoice[]>> => {
     if (!USE_MOCK) {
       const { data } = await apiClient.get<ApiResponse<Invoice[]>>("/invoices");
@@ -623,18 +637,25 @@ export const InvoicesAPI = {
     invoiceId: string,
     amount: number,
     currency: string,
-  ): Promise<ApiResponse<{ link: string }>> => {
+  ): Promise<ApiResponse<{ link: string; paymentLink?: string }>> => {
     if (!USE_MOCK) {
-      const { data } = await apiClient.post<ApiResponse<{ link: string }>>(
-        `/invoices/${invoiceId}/payment-link`,
-        { amount, currency },
-      );
-      return data;
+      const { data } = await apiClient.post<
+        ApiResponse<{ link?: string; paymentLink?: string }>
+      >(`/invoices/${invoiceId}/payment-link`, { amount, currency });
+      return {
+        success: data.success,
+        data: data.data
+          ? {
+              link: data.data.link ?? data.data.paymentLink!,
+              paymentLink: data.data.paymentLink ?? data.data.link,
+            }
+          : undefined,
+        error: data.error,
+      };
     }
     await delay(500);
-    // Mock Raenest payment link - in production, this would call Raenest API
     const mockLink = `https://pay.raenest.com/fos-${invoiceId}-${Date.now()}`;
-    return mockSuccess({ link: mockLink });
+    return mockSuccess({ link: mockLink, paymentLink: mockLink });
   },
 
   sendInvoice: async (
@@ -807,4 +828,51 @@ export const ProposalsAPI = {
     await delay(400);
     return mockSuccess(null);
   },
+};
+
+export const AuthAPI = {
+  updateProfile: async (payload: Partial<User>): Promise<ApiResponse<User>> => {
+    if (USE_MOCK) {
+      const demoUserStr =
+        typeof window !== "undefined" ? localStorage.getItem("fos_user") : null;
+      const baseUser: User = demoUserStr ? JSON.parse(demoUserStr) : MOCK_USER;
+      const updated: User = {
+        ...baseUser,
+        ...payload,
+        updatedAt: new Date().toISOString(),
+      };
+      if (typeof window !== "undefined")
+        localStorage.setItem("fos_user", JSON.stringify(updated));
+      return mockSuccess(updated);
+    }
+    const { data } = await apiClient.put<ApiResponse<User>>(
+      "/auth/profile",
+      payload,
+    );
+    return data;
+  },
+  updatePassword: async (payload: {
+    currentPassword: string;
+    newPassword: string;
+  }): Promise<ApiResponse<{ message: string }>> => {
+    if (USE_MOCK) {
+      await delay(400);
+      return mockSuccess({ message: "Password updated" });
+    }
+    const { data } = await apiClient.put<ApiResponse<{ message: string }>>(
+      "/auth/password",
+      payload,
+    );
+    return data;
+  },
+};
+
+const MOCK_USER: User = {
+  id: "u_1",
+  email: "demo@freelanceos.dev",
+  firstName: "Demo",
+  lastName: "User",
+  currency: "USD",
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
 };
