@@ -531,7 +531,7 @@ export default function ProposalsPage() {
                 <div className="flex flex-col  gap-3">
                     {/* <span className="text-xs text-neutral-50 md:hidden">scroll to see more</span> */}
                     {/* Status tabs */}
-                    <div className="flex items-center gap-1 p-1 rounded-xl bg-muted w-full  overflow-x-scroll md:overflow-x-auto">
+                    <div className="flex items-center gap-1 p-1 rounded-xl bg-muted w-full overflow-x-auto -webkit-overflow-scrolling-touch">
                         {STATUS_FILTERS.map((f) => (
                             <button
                                 key={f.value}

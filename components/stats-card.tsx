@@ -80,59 +80,59 @@ export function StatsCard({
         className,
       )}
     >
-      <CardContent className="p-5">
-        <div className="flex items-start justify-between gap-3">
-          <div className="space-y-1.5 flex-1 min-w-0">
-            {/* Title */}
-            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              {title}
-            </p>
+        <CardContent className="p-4 sm:p-5">
+          <div className="flex items-start justify-between gap-2 sm:gap-3">
+            <div className="space-y-1 sm:space-y-1.5 flex-1 min-w-0">
+              {/* Title */}
+              <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wider text-muted-foreground truncate">
+                {title}
+              </p>
 
-            {/* Value + Trend on same line */}
-            <div className="flex items-baseline gap-2 flex-wrap">
-              <h3 className="text-2xl font-bold tracking-tight font-mono tabular-nums">
-                {value}
-              </h3>
+              {/* Value + Trend on same line */}
+              <div className="flex items-baseline gap-1.5 sm:gap-2 flex-wrap">
+                <h3 className="text-lg sm:text-2xl font-bold tracking-tight font-mono tabular-nums truncate max-w-full">
+                  {value}
+                </h3>
 
-              {trend && (
-                <span
-                  className={cn(
-                    "flex items-center gap-0.5 text-xs font-medium",
-                    trendClassName,
-                  )}
-                >
-                  {trendIcon}
-                  {Math.abs(trend.value)}%
-                  {trend.label && (
-                    <span className="text-muted-foreground font-normal ml-0.5">
-                      {trend.label}
-                    </span>
-                  )}
-                </span>
+                {trend && (
+                  <span
+                    className={cn(
+                      "flex items-center gap-0.5 text-[10px] sm:text-xs font-medium",
+                      trendClassName,
+                    )}
+                  >
+                    {trendIcon}
+                    {Math.abs(trend.value)}%
+                    {trend.label && (
+                      <span className="text-muted-foreground font-normal ml-0.5 hidden sm:inline">
+                        {trend.label}
+                      </span>
+                    )}
+                  </span>
+                )}
+              </div>
+
+              {/* Description */}
+              {description && (
+                <p className="text-[10px] sm:text-xs text-muted-foreground truncate">
+                  {description}
+                </p>
               )}
             </div>
 
-            {/* Description */}
-            {description && (
-              <p className="text-xs text-muted-foreground truncate">
-                {description}
-              </p>
+            {/* Icon */}
+            {icon && (
+              <div
+                className={cn(
+                  "shrink-0 rounded-xl p-2 sm:p-2.5",
+                  iconColorMap[iconColor],
+                )}
+              >
+                {icon}
+              </div>
             )}
           </div>
-
-          {/* Icon */}
-          {icon && (
-            <div
-              className={cn(
-                "shrink-0 rounded-xl p-2.5",
-                iconColorMap[iconColor],
-              )}
-            >
-              {icon}
-            </div>
-          )}
-        </div>
-      </CardContent>
+        </CardContent>
     </Card>
   );
 }

@@ -519,35 +519,35 @@ export default function InvoicesPage() {
                 />
             )}
 
-            <div className="space-y-6 p-6 animate-fade-up">
+            <div className="space-y-6 animate-fade-up">
                 {/* Header */}
-                <div className="flex items-start justify-between gap-4">
-                    <div>
-                        <h1 className="text-2xl font-bold tracking-tight">Invoices</h1>
-                        <p className="text-sm text-muted-foreground mt-0.5">
+                <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                        <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Invoices</h1>
+                        <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 truncate">
                             {invoices.length} invoice{invoices.length !== 1 ? "s" : ""} total
                         </p>
                     </div>
                     <button
                         onClick={() => setShowModal(true)}
-                        className="flex items-center gap-2 bg-brand hover:bg-brand/90 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors shrink-0"
+                        className="flex items-center gap-2 bg-brand hover:bg-brand/90 text-white text-sm font-semibold px-3 sm:px-4 py-2 rounded-xl transition-colors shrink-0"
                     >
                         <Plus className="w-4 h-4" />
-                        New invoice
+                        <span className="hidden sm:inline">New invoice</span>
                     </button>
                 </div>
 
                 {/* Summary cards */}
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 gap-2 sm:gap-4">
                     {[
                         { label: "Total paid", amount: totalPaid, color: "text-success" },
                         { label: "Pending", amount: totalPending, color: "text-warning" },
                         { label: "Overdue", amount: totalOverdue, color: "text-destructive" },
                     ].map((s) => (
                         <Card key={s.label}>
-                            <CardContent className="p-4">
-                                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{s.label}</p>
-                                <p className={cn("text-xl font-bold font-mono", s.color)}>
+                            <CardContent className="p-3 sm:p-4">
+                                <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wider mb-0.5 sm:mb-1 truncate">{s.label}</p>
+                                <p className={cn("text-sm sm:text-xl font-bold font-mono truncate", s.color)}>
                                     {formatCurrency(s.amount)}
                                 </p>
                             </CardContent>
@@ -616,8 +616,8 @@ export default function InvoicesPage() {
                         ) : filtered.length === 0 ? (
                             <EmptyState hasSearch={!!search || statusFilter !== "all"} onAdd={() => setShowModal(true)} />
                         ) : (
-                            <div className="overflow-x-auto">
-                                <table className="w-full">
+                            <div className="overflow-x-auto -webkit-overflow-scrolling-touch">
+                                <table className="w-full min-w-[720px]">
                                     <thead>
                                         <tr className="border-b border-border text-left" style={{ background: "var(--muted)" }}>
                                             {["Invoice #", "Client", "Amount", "Status", "Due Date", "Payment Link", ""].map((h) => (

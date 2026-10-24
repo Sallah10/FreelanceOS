@@ -203,25 +203,25 @@ export default function SettingsPage() {
     ];
 
     return (
-        <div className="space-y-6 p-6 animate-fade-up">
+        <div className="space-y-6 animate-fade-up">
             {/* Header */}
             <div>
-                <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
+                <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Settings</h1>
                 <p className="text-sm text-muted-foreground mt-0.5">
                     Manage your account preferences and integrations
                 </p>
             </div>
 
-            <div className="flex flex-col lg:flex-row gap-6">
+            <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
                 {/* Sidebar Tabs */}
                 <div className="lg:w-64 shrink-0">
-                    <div className="sticky top-6 space-y-1">
+                    <div className="lg:sticky lg:top-6 flex lg:flex-col gap-1 overflow-x-auto -webkit-overflow-scrolling-touch pb-1 lg:pb-0">
                         {tabs.map((tab) => (
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
                                 className={cn(
-                                    "w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors",
+                                    "flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-sm font-medium transition-colors whitespace-nowrap shrink-0",
                                     activeTab === tab.id
                                         ? "bg-brand/10 text-brand"
                                         : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
@@ -291,18 +291,18 @@ export default function SettingsPage() {
                                     <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                                         Default Currency
                                     </label>
-                                    <select
-                                        value={profile.currency}
-                                        onChange={(e) => setProfile({ ...profile, currency: e.target.value as CurrencyCode })}
-                                        className="w-full rounded-xl px-3 py-2.5 text-sm bg-muted/50 border border-border focus:border-brand focus:outline-none"
-                                    >
-                                        <option value="USD">USD - US Dollar</option>
-                                        <option value="GBP">GBP - British Pound</option>
-                                        <option value="EUR">EUR - Euro</option>
-                                        <option value="NGN">NGN - Nigerian Naira</option>
-                                        <option value="KES">KES - Kenyan Shilling</option>
-                                        <option value="GHS">GHS - Ghanaian Cedi</option>
-                                    </select>
+                                        <select
+                                            value={profile.currency}
+                                            onChange={(e) => setProfile({ ...profile, currency: e.target.value as CurrencyCode })}
+                                            className="w-full rounded-xl px-3 py-2.5 text-sm bg-muted/50 border border-border focus:border-brand focus:outline-none"
+                                        >
+                                            <option value="USD">USD - US Dollar</option>
+                                            <option value="GBP">GBP - British Pound</option>
+                                            <option value="EUR">EUR - Euro</option>
+                                            <option value="NGN">NGN - Nigerian Naira</option>
+                                            <option value="KES">KES - Kenyan Shilling</option>
+                                            <option value="GHS">GHS - Ghanaian Cedi</option>
+                                        </select>
                                 </div>
 
                                 <div className="space-y-1.5">

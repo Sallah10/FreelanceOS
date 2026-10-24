@@ -374,36 +374,36 @@ export default function ProjectsPage() {
         />
       )}
 
-      <div className="space-y-6 p-6 animate-fade-up">
+      <div className="space-y-6 animate-fade-up">
         {/* Header */}
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Projects</h1>
-            <p className="text-sm text-muted-foreground mt-0.5">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Projects</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 truncate">
               {projects.length} project{projects.length !== 1 ? "s" : ""} ·{" "}
               {formatCurrency(totalBudget)} total budget
             </p>
           </div>
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 bg-brand hover:bg-brand/90 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors shrink-0"
+            className="flex items-center gap-2 bg-brand hover:bg-brand/90 text-white text-sm font-semibold px-3 sm:px-4 py-2 rounded-xl transition-colors shrink-0"
           >
             <Plus className="w-4 h-4" />
-            New project
+            <span className="hidden sm:inline">New project</span>
           </button>
         </div>
 
         {/* Quick stats */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4">
           {[
             { label: "Active", value: activeCount, color: "text-brand" },
             { label: "Completed", value: completedCount, color: "text-success" },
             { label: "Total budget", value: formatCurrency(totalBudget), color: "text-earn" },
           ].map((s) => (
             <Card key={s.label}>
-              <CardContent className="p-4">
-                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{s.label}</p>
-                <p className={cn("text-xl font-bold font-mono", s.color)}>{s.value}</p>
+              <CardContent className="p-3 sm:p-4">
+                <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wider mb-0.5 sm:mb-1 truncate">{s.label}</p>
+                <p className={cn("text-base sm:text-xl font-bold font-mono truncate", s.color)}>{s.value}</p>
               </CardContent>
             </Card>
           ))}

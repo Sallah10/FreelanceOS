@@ -59,10 +59,10 @@ export function DashboardTopbar() {
   const firstName = user?.firstName ?? "there";
 
   return (
-    <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-border bg-background/80 backdrop-blur-sm px-6">
-      <div className="flex items-center gap-2">
+    <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-border bg-background/80 backdrop-blur-sm px-2.5 sm:px-6">
+      <div className="flex items-center gap-1 sm:gap-2 min-w-0 flex-1">
         <MobileNav />
-        <p className="text-sm text-muted-foreground">
+        <p className="text-xs sm:text-sm text-muted-foreground truncate">
           {getGreeting()},{" "}
           <span className="font-semibold text-foreground">{firstName}</span>
         </p>
@@ -85,7 +85,7 @@ export function DashboardTopbar() {
           </Button>
 
           {open && (
-            <div className="absolute right-0 mt-2 w-80 rounded-xl border border-border bg-background shadow-lg z-30 overflow-hidden">
+            <div className="absolute right-0 mt-2 w-[calc(100vw-1.5rem)] max-w-[min(20rem,calc(100vw-1rem))] sm:w-80 rounded-xl border border-border bg-background shadow-lg z-30 overflow-hidden">
               <div className="px-4 py-3 border-b border-border flex items-center justify-between">
                 <span className="text-sm font-semibold">Notifications</span>
                 {unreadCount > 0 && (

@@ -90,7 +90,7 @@ export default function DashboardPage() {
   } = useDashboard();
 
   return (
-    <div className="space-y-6 p-6 animate-fade-up">
+    <div className="space-y-6 animate-fade-up">
       {/* ---- Header ---- */}
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -115,7 +115,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ---- Stats Grid ---- */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
         <StatsCard
           title="Total Earnings"
           value={formatCurrency(stats?.totalEarnings ?? 0)}

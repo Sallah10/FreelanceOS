@@ -305,7 +305,7 @@ export default function ClientsPage() {
                 />
             )}
 
-            <div className="space-y-6 p-6 animate-fade-up">
+            <div className="space-y-6 animate-fade-up">
                 {/* Header */}
                 <div className="flex items-start justify-between gap-4">
                     <div>
@@ -361,8 +361,8 @@ export default function ClientsPage() {
                                 onAdd={() => setShowModal(true)}
                             />
                         ) : (
-                            <div className="overflow-x-auto">
-                                <table className="w-full">
+                            <div className="overflow-x-auto -webkit-overflow-scrolling-touch">
+                                <table className="w-full min-w-[640px]">
                                     <thead>
                                         <tr
                                             className="border-b border-border text-left"
@@ -372,7 +372,7 @@ export default function ClientsPage() {
                                                 (h) => (
                                                     <th
                                                         key={h}
-                                                        className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider"
+                                                        className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider whitespace-nowrap"
                                                     >
                                                         {h}
                                                     </th>

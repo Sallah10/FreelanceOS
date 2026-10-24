@@ -256,8 +256,8 @@ export default function InvoiceDetailPage() {
                             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
                                 Items
                             </p>
-                            <div className="overflow-x-auto">
-                                <table className="w-full">
+                            <div className="overflow-x-auto -webkit-overflow-scrolling-touch">
+                                <table className="w-full min-w-[520px]">
                                     <thead>
                                         <tr className="border-b border-border">
                                             <th className="text-left py-2 text-sm font-medium">Description</th>

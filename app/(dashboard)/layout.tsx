@@ -35,8 +35,8 @@ export default function DashboardLayout({
       <AppSidebar />
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         <DashboardTopbar />
-        <main className="flex-1 overflow-y-auto scrollbar-thin">
-          <div className="max-w-screen-2xl mx-auto">{children}</div>
+        <main className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin">
+          <div className="max-w-screen-2xl mx-auto w-full px-4 py-4 sm:px-6 sm:py-6">{children}</div>
         </main>
         <DemoBanner />
       </div>

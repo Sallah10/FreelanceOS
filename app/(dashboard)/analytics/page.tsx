@@ -382,8 +382,8 @@ export default function AnalyticsPage() {
             {/* Project Profitability Table */}
             {projectProfitability.length > 0 && (
                 <ChartCard title="Project Profitability">
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
+                <div className="overflow-x-auto -webkit-overflow-scrolling-touch">
+                    <table className="w-full min-w-[520px]">
                             <thead>
                                 <tr className="border-b border-border">
                                     <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
